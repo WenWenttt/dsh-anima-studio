@@ -1,0 +1,14 @@
+# 统一换行：仓库里用 LF，Windows 脚本保留 CRLF
+* text=auto eol=lf
+
+*.ps1  text eol=crlf
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# 二进制，别做任何转换
+*.png         binary
+*.jpg         binary
+*.jpeg        binary
+*.webp        binary
+*.safetensors binary
+*.zip         binary

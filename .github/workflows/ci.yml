@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      # 插件没有运行时依赖：peer 依赖由 dsh 宿主提供，CI 只做语法与逻辑校验。
+      - name: Syntax check
+        run: npm run check
+      - name: Unit tests (dictionary / translate)
+        run: node test/translate.test.mjs
+      - name: Unit tests (setup / download plan)
+        run: node test/setup.test.mjs
+      - name: UI smoke test (client.js render)
+        run: node test/ui-smoke.test.mjs

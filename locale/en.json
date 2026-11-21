@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Anima Studio",
+    "description": "Generate anime illustrations locally with Animagine XL 4.0 via ComfyUI. Chinese descriptions convert to danbooru tags offline (3,700+ mappings, 507 characters, scene templates, artist styles, negative presets) and only fall back to a local model when the dictionary cannot cover them. Supports txt2img, img2img, inpaint, and ControlNet, plus size and ratio presets, steps, CFG, sampler, scheduler, seed, batch, LoRA stacking, draft autosave, history, favorites, archiving, and parameter reuse. Exposes generate, status, gallery, and ControlNet tools to the Agent. Requires a local ComfyUI, default http://127.0.0.1:8190."
+  }
+}

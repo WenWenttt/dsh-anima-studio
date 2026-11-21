@@ -1,0 +1,26 @@
+# 依赖与构建产物
+node_modules/
+dist/
+
+# 本地备份（我改插件时留下的快照，不进仓库）
+.backup-*/
+*.bak
+*.before-*
+
+# 运行时数据（默认在 ~/.dsh/anima-studio，万一有人把 root 指到仓库里）
+jobs/
+*.png
+!icon.svg
+!docs/**/*.png
+
+# 日志与临时文件
+*.log
+npm-debug.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+*.tmp
+
+# 编辑器
+.vscode/
+.idea/

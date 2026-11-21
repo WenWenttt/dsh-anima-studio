@@ -1,0 +1,86 @@
+{
+  "name": "dsh-anima-studio",
+  "version": "1.9.1",
+  "description": "DeepSeek Harness 插件：本地 Animagine XL 4.0 生图工作台，提示词（中文→danbooru 标签）、尺寸预设、采样参数、LoRA 叠加与图库，接本机 ComfyUI。",
+  "type": "module",
+  "license": "MIT",
+  "author": "WenhuarenNB",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "comfyui",
+    "animagine",
+    "stable-diffusion",
+    "sdxl",
+    "danbooru",
+    "anime",
+    "image-generation",
+    "prompt"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WenhuarenNB/dsh-anima-studio.git"
+  },
+  "homepage": "https://github.com/WenhuarenNB/dsh-anima-studio#readme",
+  "bugs": {
+    "url": "https://github.com/WenhuarenNB/dsh-anima-studio/issues"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "tags.js",
+    "tagdata.js",
+    "translate.js",
+    "setup.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "scripts/install-comfyui.ps1",
+    "NOTICE.md"
+  ],
+  "scripts": {
+    "check": "node --check client.js && node --check index.js && node --check tags.js && node --check translate.js && node --check setup.js && node --check tagdata.js",
+    "test": "node test/translate.test.mjs && node test/setup.test.mjs && node test/ui-smoke.test.mjs",
+    "build:tagdata": "node scripts/build-tagdata.mjs tagdata.input.json tagdata.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": ">=0.1.7-rc.2",
+    "@deepseek-ai/schemastery": ">=3.18.4 <4",
+    "@deepseek-ai/cordis": ">=4.0.0 <5"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "@deepseek-ai/schemastery": {
+      "optional": true
+    },
+    "@deepseek-ai/cordis": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0",
+    "dsh": ">=0.2.2-rc.1"
+  }
+}

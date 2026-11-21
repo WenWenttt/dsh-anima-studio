@@ -1,0 +1,4 @@
+- insert:
+    - id: anima-studio
+      name: dsh-anima-studio
+      config: {}
