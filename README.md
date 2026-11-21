@@ -15,6 +15,15 @@
 
 > 只支持本机 ComfyUI，不含模型文件，不联网出图（除了你自己配置的模型通道）。
 
+## 截图
+
+| 创作页 | 高级设置 |
+| --- | --- |
+| <img src="docs/screenshots/create.png" width="560" alt="创作页：画面描述、场景模板、画师风格、四种生成模式"> | <img src="docs/screenshots/advanced.png" width="560" alt="高级设置：创作预设、LoRA 叠加、负面预设"> |
+
+左：中文描述 → 标签、场景模板、画师风格、角色自动补外观，四种模式随时切换；右：创作预设、LoRA 叠加（最多 8 个）、负面预设与采样参数。
+截图环境：ComfyUI 0.46.0 + RTX 4060 Laptop + Animagine XL 4.0 Opt。
+
 ## 安装
 
 **前提**：已装好 dsh（`dsh` >= 0.2.2-rc.1）。

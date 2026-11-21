@@ -1,0 +1,45 @@
+name: 功能建议
+description: 想要新的模式、参数、交互或标签库改进
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: 你想要什么
+      placeholder: 希望能在创作页直接切换 LoRA 预设组合，而不是每次进高级设置。
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: 为什么需要
+      description: 你现在的做法是什么、卡在哪。
+      placeholder: 我常用固定的 3 套 LoRA 组合，每次手动切 5 个下拉很麻烦。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 涉及的部分
+      options:
+        - 创作页 / 高级设置 UI
+        - 中文 → 标签（词库 / 模型）
+        - 场景模板 / 画师风格 / 负面预设
+        - 生成参数（采样、尺寸、LoRA）
+        - 图库 / 预设 / 草稿
+        - 环境准备 / 安装脚本
+        - 对话工具（Agent 侧）
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: alt
+    attributes:
+      label: 你考虑过的替代方案
+      description: 可选。比如「用别的插件组合实现」「手动改配置文件」。
+    validations:
+      required: false

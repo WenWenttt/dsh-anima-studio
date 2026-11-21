@@ -1,0 +1,99 @@
+name: 问题反馈
+description: 生成失败、页面异常、标签转换不对等问题
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！这些信息能帮我在不动你电脑的情况下定位问题。
+        如果只是**安装/配置**上的疑问，先看 [README 的安装章节](https://github.com/WenhuarenNB/dsh-anima-studio#安装)，那一节覆盖了 90% 的问题。
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 发生了什么
+      description: 一句话说清现象，例如「点生成后一直停在排队中」「页面顶部显示 ComfyUI 离线」。
+      placeholder: 点「生成图片」后，预览区一直显示「正在生成… 0s」，等了 5 分钟没反应。
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 从打开页面开始，按顺序写你点了什么。
+      placeholder: |
+        1. 打开侧边栏「图片创作」
+        2. 输入「金发, 校服, 教室」
+        3. 点「中 → 标签」（正常）
+        4. 点「生成图片」→ 卡住
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: 生成模式
+      options:
+        - 文生图 (txt2img)
+        - 图生图 (img2img)
+        - 蒙版重绘 (inpaint)
+        - ControlNet
+        - 与模式无关 / 不确定
+    validations:
+      required: true
+
+  - type: dropdown
+    id: stage
+    attributes:
+      label: 出问题的环节
+      options:
+        - 安装 / 启动 dsh
+        - 页面打不开 / 空白
+        - ComfyUI 连接（顶部显示离线）
+        - 环境准备 / 下载模型
+        - 中文 → 标签转换
+        - 生成出图（排队、报错、超时）
+        - 图库 / 预设 / LoRA
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 环境信息
+      description: 页面顶部那行 chips 里就有 ComfyUI 版本和显卡；dsh 版本在「设置 → 关于」。
+      placeholder: |
+        dsh 版本：0.2.2-rc.5
+        ComfyUI 版本：0.46.0
+        显卡：cuda:0 RTX 4060 Laptop GPU
+        系统：Windows 11 23H2
+        插件版本：1.9.1
+        baseURL：http://127.0.0.1:8190
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 报错信息 / 日志
+      description: 页面上的红字、任务卡片里的错误、或 dsh 终端里最后 20 行。**贴之前把路径里的用户名、token 打码。**
+      render: text
+      placeholder: |
+        ComfyUI 500: {"error": ...}
+        或
+        生成失败：连不上本地 ComfyUI（http://127.0.0.1:8190）
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前自查
+      options:
+        - label: 我已经跑过 `npm test`（如果是自己改过代码）
+          required: false
+        - label: 我确认贴出的日志里没有 API key / token / 个人路径
+          required: true
