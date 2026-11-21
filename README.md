@@ -303,6 +303,8 @@ npm test        # 词库/转换单元测试 + 迷你 React 渲染冒烟
 
 三套测试都不需要 ComfyUI、不需要浏览器、不需要安装依赖：`test/ui-smoke.test.mjs` 用一段手写的迷你 React 替身（约 60 行）跑真实渲染路径，能抓到「组件里引用了不存在的变量」这类错误。
 
+想参与开发（改代码、加词条、提 PR）先看 [CONTRIBUTING.md](CONTRIBUTING.md)：里面有 `client.js` 的单文件约束、测试怎么补、词库怎么重新生成。
+
 ## 词库与授权
 
 代码是 MIT；**`tagdata.js` 不在 MIT 范围内**——它是第三方整理的衍生数据，来源、风险与替代方案见 [NOTICE.md](NOTICE.md)。
