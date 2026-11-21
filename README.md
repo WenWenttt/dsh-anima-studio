@@ -56,11 +56,11 @@ git clone https://github.com/WenhuarenNB/dsh-anima-studio.git \
 
 ## 拿到 ComfyUI 与模型（三种方式，选一种）
 
-插件不含权重（原因见下），但也不要求你手动折腾目录 —— 装完插件先看页面顶部的「环境未就绪」横幅：
+插件不含权重，也**不会自动拉起 ComfyUI**：没启动时页面顶部显示「ComfyUI 离线」，生成会直接报连接错误而不是静默失败；想让它顺手拉起，配置 `startScript` 指向你的启动脚本，插件会 spawn 它并轮询端口。
 
 **方式 A · 已经装过 ComfyUI（最常见）**
 
-只要服务能打开，把模型文件丢进 ComfyUI 的 `models/checkpoints/` 即可。不知道放哪就在插件的「环境准备」里点「下载模型到 ComfyUI」，它会自动下到 `comfyRoot/models/checkpoints/`；配置里写一下 `comfyRoot` 指向你的 ComfyUI 根目录就行。
+把 `animagine-xl-4.0-opt.safetensors` 放进 ComfyUI 的 `models/checkpoints/` 即可。不知道放哪就让插件下：页面横幅「准备环境 → 下载模型到 ComfyUI」会从 Hugging Face 拉（约 6.9 GB，**断点续传**，官方源失败自动换 `hf-mirror.com`），进度/速度/剩余时间实时显示、可取消，落到 `comfyRoot/models/checkpoints/`；配置里写一下 `comfyRoot` 指向你的 ComfyUI 根目录就行。
 
 **方式 B · 让插件拉 ComfyUI（Windows / NVIDIA）**
 
@@ -86,28 +86,12 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install-comfyui.ps1 -Port 819
 
 **方式 C · 全手动**：官方 ComfyUI portable + 自己下 `animagine-xl-4.0-opt.safetensors` 放进 `models/checkpoints/`。
 
-### 「下载模型」是什么
-
-页面横幅 →「准备环境」→「下载模型到 ComfyUI」：
-
-- 从 Hugging Face 拉 `animagine-xl-4.0-opt.safetensors`（约 6.9 GB），**断点续传**，官方源失败自动换 `hf-mirror.com`
-- 落到 `comfyRoot/models/checkpoints/`（默认 `~/.dsh/anima-studio/setup/ComfyUI/...`）
-- 进度、速度、剩余时间实时显示，可取消；下完自动重新检测
-- 想换源：配置 `modelSource: hf | mirror`，或用 `modelUrl` 指定任意直链
-
 ### 为什么仓库里不带权重
 
 - **GitHub 放不下**：单文件 100 MB、Release 单文件 2 GB 的硬限制，SDXL fp16 权重是 6.9 GB
 - **许可要求**：Animagine XL 4.0 采用 [FAIPL-1.0-SD](https://freedevproject.org/faipl-1.0-sd/)，再分发需要随附许可证与署名，做成"下载即同意"更干净
 
 所以策略是：**代码开源、权重按需现下**。
-
-## 需要先启动的东西
-
-插件本身不含模型。它调用本机的 ComfyUI（默认 `http://127.0.0.1:8190`）：
-
-- 默认**不负责拉起** ComfyUI，COMfyUI 没起来时页面顶部显示「ComfyUI 离线」，生成会直接报连接错误而不是静默失败；
-- 想让它顺手拉起，配置 `startScript` 指向你自己的启动脚本（例如 `launch-comfy.ps1`），插件会 spawn 它并轮询端口。
 
 ## 页面里能做什么
 
@@ -196,19 +180,6 @@ POST /api/anima-studio/translate
 ```
 
 三个字段：`text` 原文、`mode` 生成模式（决定收敛程度）、`appearance` 是否给角色补外观。`engine` 可选（`auto` 默认 / `dict` / `llm`），界面固定发 `auto`，curl 调试时可以强制走词典或模型。
-
-配置项（`cordis.yml` 的 `anima-studio.config`）：
-
-```yaml
-- id: anima-studio
-  name: dsh-anima-studio
-  config:
-    llmProvider: deepseek-account   # 走哪个 DSH 模型通道
-    llmModel: deepseek-flash        # 转换用的模型
-    llmTimeoutMs: 30000
-    llmMaxTokens: 320
-    # llmSystemPrompt: 自定义转换提示（整段替换）
-```
 
 ### 高级设置（独立页面）
 
@@ -330,14 +301,14 @@ npm run check   # node --check 全部源码
 npm test        # 词库/转换单元测试 + 迷你 React 渲染冒烟
 ```
 
-两套测试都不需要 ComfyUI、不需要浏览器、不需要安装依赖：`test/ui-smoke.test.mjs` 用 60 行的手写 React 替身跑真实渲染路径，能抓到「组件里引用了不存在的变量」这类错误。
+三套测试都不需要 ComfyUI、不需要浏览器、不需要安装依赖：`test/ui-smoke.test.mjs` 用一段手写的迷你 React 替身（约 60 行）跑真实渲染路径，能抓到「组件里引用了不存在的变量」这类错误。
 
 ## 词库与授权
 
-`tagdata.js` 的**代码**（匹配/清洗逻辑）是 MIT；**数据**来自第三方整理，来源与授权说明见 [NOTICE.md](NOTICE.md)。
+代码是 MIT；**`tagdata.js` 不在 MIT 范围内**——它是第三方整理的衍生数据，来源、风险与替代方案见 [NOTICE.md](NOTICE.md)。
 如果你对合规敏感或要商用，请按 NOTICE 里的替代路线，用公开 danbooru dump 重新生成
 （`npm run build:tagdata`，输入格式见 `scripts/build-tagdata.mjs` 顶部注释）。
 
 ## License
 
-[MIT](LICENSE)。`tagdata.js` 的数据部分另见 [NOTICE.md](NOTICE.md)。
+[MIT](LICENSE)（仅代码）。`tagdata.js` 的数据部分见 [NOTICE.md](NOTICE.md)。

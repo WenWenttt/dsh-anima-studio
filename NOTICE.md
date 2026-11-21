@@ -1,8 +1,8 @@
 # 数据来源与授权说明
 
-本仓库的**代码**（`index.js`、`client.js`、`translate.js`、`tags.js` 的匹配逻辑等）以 MIT 协议发布。
+本仓库的**代码**（`index.js`、`client.js`、`tags.js`、`translate.js`、`setup.js`、前端资源、测试与脚本）以 MIT 发布，见 [LICENSE](LICENSE)。
 
-但 **`tagdata.js` 是第三方整理的数据**，来源与授权需要单独说明：
+**`tagdata.js` 不在 MIT 范围内。** 它是第三方整理的衍生数据，来源、风险与替代方案说明如下：
 
 ## 来源
 
