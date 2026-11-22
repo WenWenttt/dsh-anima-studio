@@ -27,11 +27,10 @@ The MIT license above covers the source code of this project
 (index.js, client.js, tags.js, translate.js, setup.js, client assets, tests, scripts).
 
 The file `tagdata.js` is NOT covered by this MIT license. It contains tag mappings
-derived from a third-party tool (see NOTICE.md for provenance and the status of
-permission). Its terms are described in NOTICE.md; remove that file if you cannot
-comply with them.
+derived from a third-party tool, used here with the original author's permission
+(2026-11-22; see NOTICE.md). Copyright in that data remains with its author.
 
 上面的 MIT 许可只覆盖本项目的源代码（index.js、client.js、tags.js、translate.js、
 setup.js、前端资源、测试与脚本）。`tagdata.js` 是第三方整理的衍生数据，不在 MIT
-许可范围内，来源与授权状态见 NOTICE.md；无法满足其条款时请删除该文件。
+许可范围内：本项目经原作者授权随附使用（2026-11-22，见 NOTICE.md），版权归原作者。
 --------------------------------------------------------------------------------

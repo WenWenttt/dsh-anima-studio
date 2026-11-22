@@ -307,9 +307,12 @@ npm test        # 词库/转换单元测试 + 迷你 React 渲染冒烟
 
 ## 词库与授权
 
-代码是 MIT；**`tagdata.js` 不在 MIT 范围内**——它是第三方整理的衍生数据，来源、风险与替代方案见 [NOTICE.md](NOTICE.md)。
-如果你对合规敏感或要商用，请按 NOTICE 里的替代路线，用公开 danbooru dump 重新生成
-（`npm run build:tagdata`，输入格式见 `scripts/build-tagdata.mjs` 顶部注释）。
+代码是 MIT。`tagdata.js` 是第三方整理的衍生数据，**不在 MIT 范围内**，经原作者授权在本项目中随附使用：
+
+- **数据来源**：[B 站 @柒月FIGO](https://space.bilibili.com/397340036) 的《[Anima提示词生成器](https://www.bilibili.com/video/BV1dZ4g6tET6/)》v3.0
+- **授权**：2026-11-22 经作者在 B 站私信同意（记录见 [NOTICE.md](NOTICE.md)，对话截图 `docs/permission-2026-11-22.png`）
+- **版权**：归原作者；你想把这份数据复用到别的项目，请自行联系作者
+- **自建**：也可以按 `npm run build:tagdata` 用公开 danbooru dump + 中文别名生成自己的词库
 
 ## License
 
