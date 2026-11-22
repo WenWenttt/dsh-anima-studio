@@ -240,10 +240,10 @@ upper body, outdoors, masterpiece, high score, great score, absurdres
 ## 已知边界
 
 - 图生图/蒙版重绘需要参考图（从图库选或上传），蒙版重绘还需一张蒙版图（白色区域会被重绘）。ControlNet 需要在 ComfyUI 的 `models/controlnet` 目录放好对应模型。
-- 一次只跑一个任务，后续任务排队，避免 8 GB 显存被打爆。
+- 一次只跑一个任务，后续任务排队：SDXL 本身就要 6–8 GB 显存，并发只会一起变慢。
 - 取消生成会中断 ComfyUI 当前执行的任务，并把该任务标记为「已取消」。
 - LoRA 列表来自 ComfyUI 的 `LoraLoader` / `LoraLoaderModelOnly` 节点，放文件到 `ComfyUI\models\loras\` 后点卡片里的「刷新列表」即可，不必等整页刷新。
-- 生成中和 Qwen 网关互斥：两边抢同一块显存，先停一边。
+- 同一块显卡上如果还跑着别的生图/视频模型，先停一边——显存不够时两边都会失败。
 
 ## 配置项
 
