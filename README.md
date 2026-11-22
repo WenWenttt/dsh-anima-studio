@@ -1,5 +1,12 @@
 # 绘梦 · Animagine（dsh-anima-studio）
 
+[![CI](https://github.com/WenhuarenNB/dsh-anima-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/WenhuarenNB/dsh-anima-studio/actions/workflows/ci.yml)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen)
+![dsh](https://img.shields.io/badge/dsh-%3E%3D0.2.2--rc.1-7c5cff)
+
+[更新日志](CHANGELOG.md) · [发布记录](https://github.com/WenhuarenNB/dsh-anima-studio/releases) · [参与开发](CONTRIBUTING.md)
+
 [DeepSeek Harness](https://github.com/deepseek-ai)（dsh）插件：把本地 **Animagine XL 4.0 Opt**（SDXL 微调）跑在 **ComfyUI** 上，给你一个能写中文提示词、调参数、翻图库的工作台，并让 Agent 能直接生成图片。
 
 - 中文描述 → danbooru 英文标签：**3700+ 离线映射 / 507 个角色**，切不干净的句子才交给 dsh 自带模型
@@ -9,6 +16,15 @@
 - 四个对话工具：生成 / 查状态 / 查图库 / 列 ControlNet
 
 > 只支持本机 ComfyUI，不含模型文件，不联网出图（除了你自己配置的模型通道）。
+
+## 截图
+
+| 创作页 | 高级设置 |
+| --- | --- |
+| <img src="docs/screenshots/create.png" width="560" alt="创作页：画面描述、场景模板、画师风格、四种生成模式"> | <img src="docs/screenshots/advanced.png" width="560" alt="高级设置：创作预设、LoRA 叠加、负面预设"> |
+
+左：中文描述 → 标签、场景模板、画师风格、角色自动补外观，四种模式随时切换；右：创作预设、LoRA 叠加（最多 8 个）、负面预设与采样参数。
+截图环境：ComfyUI 0.46.0 + RTX 4060 Laptop + Animagine XL 4.0 Opt。
 
 ## 安装
 
@@ -42,11 +58,11 @@ git clone https://github.com/WenhuarenNB/dsh-anima-studio.git \
 
 ## 拿到 ComfyUI 与模型（三种方式，选一种）
 
-插件不含权重（原因见下），但也不要求你手动折腾目录 —— 装完插件先看页面顶部的「环境未就绪」横幅：
+插件不含权重，也**不会自动拉起 ComfyUI**：没启动时页面顶部显示「ComfyUI 离线」，生成会直接报连接错误而不是静默失败；想让它顺手拉起，配置 `startScript` 指向你的启动脚本，插件会 spawn 它并轮询端口。
 
 **方式 A · 已经装过 ComfyUI（最常见）**
 
-只要服务能打开，把模型文件丢进 ComfyUI 的 `models/checkpoints/` 即可。不知道放哪就在插件的「环境准备」里点「下载模型到 ComfyUI」，它会自动下到 `comfyRoot/models/checkpoints/`；配置里写一下 `comfyRoot` 指向你的 ComfyUI 根目录就行。
+把 `animagine-xl-4.0-opt.safetensors` 放进 ComfyUI 的 `models/checkpoints/` 即可。不知道放哪就让插件下：页面横幅「准备环境 → 下载模型到 ComfyUI」会从 Hugging Face 拉（约 6.9 GB，**断点续传**，官方源失败自动换 `hf-mirror.com`），进度/速度/剩余时间实时显示、可取消，落到 `comfyRoot/models/checkpoints/`；配置里写一下 `comfyRoot` 指向你的 ComfyUI 根目录就行。
 
 **方式 B · 让插件拉 ComfyUI（Windows / NVIDIA）**
 
@@ -72,28 +88,12 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install-comfyui.ps1 -Port 819
 
 **方式 C · 全手动**：官方 ComfyUI portable + 自己下 `animagine-xl-4.0-opt.safetensors` 放进 `models/checkpoints/`。
 
-### 「下载模型」是什么
-
-页面横幅 →「准备环境」→「下载模型到 ComfyUI」：
-
-- 从 Hugging Face 拉 `animagine-xl-4.0-opt.safetensors`（约 6.9 GB），**断点续传**，官方源失败自动换 `hf-mirror.com`
-- 落到 `comfyRoot/models/checkpoints/`（默认 `~/.dsh/anima-studio/setup/ComfyUI/...`）
-- 进度、速度、剩余时间实时显示，可取消；下完自动重新检测
-- 想换源：配置 `modelSource: hf | mirror`，或用 `modelUrl` 指定任意直链
-
 ### 为什么仓库里不带权重
 
 - **GitHub 放不下**：单文件 100 MB、Release 单文件 2 GB 的硬限制，SDXL fp16 权重是 6.9 GB
 - **许可要求**：Animagine XL 4.0 采用 [FAIPL-1.0-SD](https://freedevproject.org/faipl-1.0-sd/)，再分发需要随附许可证与署名，做成"下载即同意"更干净
 
 所以策略是：**代码开源、权重按需现下**。
-
-## 需要先启动的东西
-
-插件本身不含模型。它调用本机的 ComfyUI（默认 `http://127.0.0.1:8190`）：
-
-- 默认**不负责拉起** ComfyUI，COMfyUI 没起来时页面顶部显示「ComfyUI 离线」，生成会直接报连接错误而不是静默失败；
-- 想让它顺手拉起，配置 `startScript` 指向你自己的启动脚本（例如 `launch-comfy.ps1`），插件会 spawn 它并轮询端口。
 
 ## 页面里能做什么
 
@@ -183,19 +183,6 @@ POST /api/anima-studio/translate
 
 三个字段：`text` 原文、`mode` 生成模式（决定收敛程度）、`appearance` 是否给角色补外观。`engine` 可选（`auto` 默认 / `dict` / `llm`），界面固定发 `auto`，curl 调试时可以强制走词典或模型。
 
-配置项（`cordis.yml` 的 `anima-studio.config`）：
-
-```yaml
-- id: anima-studio
-  name: dsh-anima-studio
-  config:
-    llmProvider: deepseek-account   # 走哪个 DSH 模型通道
-    llmModel: deepseek-flash        # 转换用的模型
-    llmTimeoutMs: 30000
-    llmMaxTokens: 320
-    # llmSystemPrompt: 自定义转换提示（整段替换）
-```
-
 ### 高级设置（独立页面）
 
 从「生成参数 → 高级设置」进入，左上角「← 返回创作」或底部「完成设置」返回。五张卡片：
@@ -255,10 +242,10 @@ upper body, outdoors, masterpiece, high score, great score, absurdres
 ## 已知边界
 
 - 图生图/蒙版重绘需要参考图（从图库选或上传），蒙版重绘还需一张蒙版图（白色区域会被重绘）。ControlNet 需要在 ComfyUI 的 `models/controlnet` 目录放好对应模型。
-- 一次只跑一个任务，后续任务排队，避免 8 GB 显存被打爆。
+- 一次只跑一个任务，后续任务排队：SDXL 本身就要 6–8 GB 显存，并发只会一起变慢。
 - 取消生成会中断 ComfyUI 当前执行的任务，并把该任务标记为「已取消」。
 - LoRA 列表来自 ComfyUI 的 `LoraLoader` / `LoraLoaderModelOnly` 节点，放文件到 `ComfyUI\models\loras\` 后点卡片里的「刷新列表」即可，不必等整页刷新。
-- 生成中和 Qwen 网关互斥：两边抢同一块显存，先停一边。
+- 同一块显卡上如果还跑着别的生图/视频模型，先停一边——显存不够时两边都会失败。
 
 ## 配置项
 
@@ -316,14 +303,21 @@ npm run check   # node --check 全部源码
 npm test        # 词库/转换单元测试 + 迷你 React 渲染冒烟
 ```
 
-两套测试都不需要 ComfyUI、不需要浏览器、不需要安装依赖：`test/ui-smoke.test.mjs` 用 60 行的手写 React 替身跑真实渲染路径，能抓到「组件里引用了不存在的变量」这类错误。
+三套测试都不需要 ComfyUI、不需要浏览器、不需要安装依赖：`test/ui-smoke.test.mjs` 用一段手写的迷你 React 替身（约 60 行）跑真实渲染路径，能抓到「组件里引用了不存在的变量」这类错误。
+
+想参与开发（改代码、加词条、提 PR）先看 [CONTRIBUTING.md](CONTRIBUTING.md)：里面有 `client.js` 的单文件约束、测试怎么补、词库怎么重新生成。
+
+**维护者**请看 [docs/MAINTENANCE.md](docs/MAINTENANCE.md)：dsh 升级后的 5 处兼容性检查点、issue 处理 SOP、`scripts/release.ps1` 发版流程、回滚与退出方案。
 
 ## 词库与授权
 
-`tagdata.js` 的**代码**（匹配/清洗逻辑）是 MIT；**数据**来自第三方整理，来源与授权说明见 [NOTICE.md](NOTICE.md)。
-如果你对合规敏感或要商用，请按 NOTICE 里的替代路线，用公开 danbooru dump 重新生成
-（`npm run build:tagdata`，输入格式见 `scripts/build-tagdata.mjs` 顶部注释）。
+代码是 MIT。`tagdata.js` 是第三方整理的衍生数据，**不在 MIT 范围内**，经原作者授权在本项目中随附使用：
+
+- **数据来源**：[B 站 @柒月FIGO](https://space.bilibili.com/397340036) 的《[Anima提示词生成器](https://www.bilibili.com/video/BV1dZ4g6tET6/)》v3.0
+- **授权**：2026-11-22 经作者在 B 站私信同意（记录见 [NOTICE.md](NOTICE.md)，对话截图 `docs/permission-2026-11-22.png`）
+- **版权**：归原作者；你想把这份数据复用到别的项目，请自行联系作者
+- **自建**：也可以按 `npm run build:tagdata` 用公开 danbooru dump + 中文别名生成自己的词库
 
 ## License
 
-[MIT](LICENSE)。`tagdata.js` 的数据部分另见 [NOTICE.md](NOTICE.md)。
+[MIT](LICENSE)（仅代码）。`tagdata.js` 的数据部分见 [NOTICE.md](NOTICE.md)。
