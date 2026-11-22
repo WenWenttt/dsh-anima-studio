@@ -84,13 +84,15 @@ PR 前自查：
 
 ## 发布流程（维护者）
 
-```bash
-npm test                                  # 1. 测试
-# 2. 改 package.json 的 version + CHANGELOG.md
-git add -A && git commit -m "chore: 升级到 x.y.z" && git push
-git tag vX.Y.Z && git push --tags         # 3. 打标签
-# 4. GitHub → Releases → 创建发行版，粘贴 CHANGELOG 对应段落
+发版已经脚本化，完整说明见 [`docs/MAINTENANCE.md`](docs/MAINTENANCE.md)。最短路径：
+
+```powershell
+npm test                                                   # 1. 测试
+powershell -ExecutionPolicy Bypass -File .\scripts\release.ps1 -Bump patch   # 2. 升版本+CHANGELOG+提交+打标签+推送
+# 3. GitHub → Releases → 创建发行版，粘贴 CHANGELOG 对应段落
 ```
+
+`-Bump patch`（修 bug）/ `minor`（新功能）/ `major`（破坏性变更）；加 `-DryRun` 只看计划、`-NoPush` 只本地演练。
 
 ## 行为准则
 

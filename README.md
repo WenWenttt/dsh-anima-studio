@@ -305,6 +305,8 @@ npm test        # 词库/转换单元测试 + 迷你 React 渲染冒烟
 
 想参与开发（改代码、加词条、提 PR）先看 [CONTRIBUTING.md](CONTRIBUTING.md)：里面有 `client.js` 的单文件约束、测试怎么补、词库怎么重新生成。
 
+**维护者**请看 [docs/MAINTENANCE.md](docs/MAINTENANCE.md)：dsh 升级后的 5 处兼容性检查点、issue 处理 SOP、`scripts/release.ps1` 发版流程、回滚与退出方案。
+
 ## 词库与授权
 
 代码是 MIT。`tagdata.js` 是第三方整理的衍生数据，**不在 MIT 范围内**，经原作者授权在本项目中随附使用：
