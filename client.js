@@ -241,6 +241,10 @@ window.__ModuleLoader__.load({
 .as-tip-arrow.below { bottom:-5px; border-top:none; border-left:none; }
 .as-tip-arrow.above { top:-5px; border-bottom:none; border-right:none; }
 @keyframes as-tip-in { from { opacity:0; } to { opacity:1; } }
+.as-tip-wrap { display:inline-flex; min-width:0; }
+.as-tip-wrap-block { display:flex; width:100%; min-width:0; }
+.as-tip-wrap-block > .as-dd,
+.as-tip-wrap-block > input { width:100%; }
 .as-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:12px; }
 .as-gcard { border:1px solid var(--dsw-alias-border, light-dark(#e6e6ea,#2c2c33)); border-radius:12px; overflow:hidden; background: var(--dsw-alias-bg-secondary, light-dark(#fafafc,#1a1a20)); display:flex; flex-direction:column; }
 .as-gcard img { width:100%; display:block; cursor:zoom-in; background:#00000010; }
@@ -279,7 +283,7 @@ window.__ModuleLoader__.load({
 .as-dd-car { flex:0 0 auto; width:14px; height:14px; opacity:.6; transition: transform .18s ease, opacity .16s ease; }
 .as-dd-btn.open .as-dd-car, .as-dd-btn:hover .as-dd-car { opacity:.95; }
 .as-dd-btn.open .as-dd-car { transform: rotate(180deg); }
-.as-dd-menu { position:fixed; z-index:10050; box-sizing:border-box; min-width:120px; max-height:304px; overflow-y:auto; overscroll-behavior:contain; padding:6px; border-radius:12px; border:1px solid var(--dsw-alias-border, light-dark(#e2e2e8,#34343c)); background: var(--dsw-alias-bg-primary, light-dark(#ffffff,#1b1b21)); box-shadow: 0 22px 48px -16px #0000004d, 0 4px 12px -6px #0000002e; animation: as-dd-in .13s ease-out; }
+.as-dd-menu { position:fixed; z-index:10085; box-sizing:border-box; min-width:120px; max-height:304px; overflow-y:auto; overscroll-behavior:contain; padding:6px; border-radius:12px; border:1px solid var(--dsw-alias-border, light-dark(#e2e2e8,#34343c)); background: var(--dsw-alias-bg-primary, light-dark(#ffffff,#1b1b21)); box-shadow: 0 22px 48px -16px #0000004d, 0 4px 12px -6px #0000002e; animation: as-dd-in .13s ease-out; }
 .as-dd-menu::-webkit-scrollbar { width:8px; }
 .as-dd-menu::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--dsw-alias-text-secondary, #8a8a94) 35%, transparent); border-radius:99px; }
 @keyframes as-dd-in { from { opacity:0; transform: translateY(-4px) scale(.985); } to { opacity:1; transform:none; } }
@@ -292,9 +296,12 @@ window.__ModuleLoader__.load({
 .as-dd-opt.off { opacity:.45; cursor:default; }
 .as-dd-opt .as-dd-tick { margin-left:auto; font-size:11px; line-height:1; }
 .as-dd-opt .as-dd-hint { font-size:11px; color: var(--dsw-alias-text-secondary, light-dark(#8a8a94,#7c7c88)); white-space:nowrap; }
+.as-dd-search { padding: 2px 2px 8px; position: sticky; top: -6px; margin-top:-6px; padding-top:8px; background: var(--dsw-alias-bg-elevated, transparent); z-index:1; }
+.as-dd-search-input { width:100%; box-sizing:border-box; font: inherit; font-size:12.5px; padding:6px 9px; border-radius:8px; border:1px solid var(--dsw-alias-border-subtle, rgba(0,0,0,.14)); background: var(--dsw-alias-bg-subtle, rgba(0,0,0,.03)); color:inherit; outline:none; }
+.as-dd-search-input:focus { border-color: var(--dsw-alias-accent, #4a7dff); box-shadow: 0 0 0 2px color-mix(in srgb, var(--dsw-alias-accent, #4a7dff) 18%, transparent); }
 
 /* ---- toasts -------------------------------------------------------- */
-.as-toasts { position:fixed; z-index:10060; right:20px; bottom:20px; display:flex; flex-direction:column; gap:8px; align-items:flex-end; pointer-events:none; }
+.as-toasts { position:fixed; z-index:10095; right:20px; bottom:20px; display:flex; flex-direction:column; gap:8px; align-items:flex-end; pointer-events:none; }
 .as-toast { pointer-events:auto; display:flex; align-items:center; gap:8px; max-width:min(380px, 80vw); padding:9px 14px; border-radius:11px; font-size:12.5px; line-height:1.5; color: var(--dsw-alias-text-primary, light-dark(#1b1b1f,#e9e9ec)); background: var(--dsw-alias-bg-primary, light-dark(#ffffff,#1b1b21)); border:1px solid var(--dsw-alias-border, light-dark(#e2e2e8,#34343c)); box-shadow: 0 18px 40px -16px #0000004d, 0 2px 8px -4px #00000024; cursor:pointer; animation: as-toast-in .2s cubic-bezier(.2,.8,.3,1); }
 .as-toast.ok { border-color:#1a9e5b55; }
 .as-toast.ok .as-toast-ico { color:#1a9e5b; }
@@ -324,7 +331,7 @@ window.__ModuleLoader__.load({
 .as-chip.btn:hover, .as-chip.btn.on { color: var(--dsw-alias-accent, #4a7dff); border-color: color-mix(in srgb, var(--dsw-alias-accent, #4a7dff) 55%, transparent); background: color-mix(in srgb, var(--dsw-alias-accent, #4a7dff) 10%, transparent); }
 .as-chip.btn .as-dd-car { width:11px; height:11px; opacity:.7; }
 .as-chip.btn.on .as-dd-car { transform: rotate(180deg); }
-.as-pop { position:fixed; z-index:10065; box-sizing:border-box; display:flex; flex-direction:column; max-height:min(70vh, 560px); border-radius:12px; border:1px solid var(--dsw-alias-border, light-dark(#e2e2e8,#34343c)); background: var(--dsw-alias-bg-primary, light-dark(#ffffff,#1b1b21)); box-shadow: 0 22px 48px -16px #0000004d, 0 4px 12px -6px #0000002e; animation: as-dd-in .13s ease-out; overflow:hidden; }
+.as-pop { position:fixed; z-index:10085; box-sizing:border-box; display:flex; flex-direction:column; max-height:min(70vh, 560px); border-radius:12px; border:1px solid var(--dsw-alias-border, light-dark(#e2e2e8,#34343c)); background: var(--dsw-alias-bg-primary, light-dark(#ffffff,#1b1b21)); box-shadow: 0 22px 48px -16px #0000004d, 0 4px 12px -6px #0000002e; animation: as-dd-in .13s ease-out; overflow:hidden; }
 .as-pop-head { display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid var(--dsw-alias-border, light-dark(#ececf1,#2a2a31)); }
 .as-pop-title { flex:1 1 auto; font-size:13px; font-weight:600; }
 .as-pop-body { flex:1 1 auto; min-height:0; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:14px; }
@@ -567,6 +574,129 @@ window.__ModuleLoader__.load({
       );
     }
 
+    /**
+     * 给任意控件套一层"自绘气泡"：悬停 / 键盘聚焦就浮出，替代原生 title。
+     * title 的方框由浏览器绘制、无法主题化，所以这两条路径都走同款 .as-tip。
+     */
+    function Tip({ text, children, block, style }) {
+      const [open, setOpen] = useState(false);
+      const [geo, setGeo] = useState(null);
+      const geoRef = useRef(null);
+      const wrapRef = useRef(null);
+      const tipRef = useRef(null);
+      const showTimer = useRef(null);
+      const hideTimer = useRef(null);
+
+      const apply = useCallback((next) => {
+        geoRef.current = next;
+        setGeo(next);
+      }, []);
+
+      const relayout = useCallback(() => {
+        const node = tipRef.current;
+        const anchor = wrapRef.current;
+        if (node && anchor) apply(placeLayer(node, anchor, { gap: 9 }, geoRef.current));
+      }, [apply]);
+
+      const close = useCallback(() => {
+        if (showTimer.current) clearTimeout(showTimer.current);
+        if (hideTimer.current) clearTimeout(hideTimer.current);
+        hideTimer.current = setTimeout(() => {
+          setOpen(false);
+          geoRef.current = null;
+          setGeo(null);
+        }, 90);
+      }, []);
+
+      /** 立即收起（不等淡出），用于点开下拉/面板时把气泡让出来 */
+      const hideNow = useCallback(() => {
+        if (showTimer.current) clearTimeout(showTimer.current);
+        if (hideTimer.current) clearTimeout(hideTimer.current);
+        setOpen(false);
+        geoRef.current = null;
+        setGeo(null);
+      }, []);
+
+      const show = useCallback(() => {
+        if (showTimer.current) clearTimeout(showTimer.current);
+        if (hideTimer.current) clearTimeout(hideTimer.current);
+        showTimer.current = setTimeout(() => {
+          // 已经有浮层打开时不再弹气泡，避免挡住下拉菜单/面板
+          const hasLayer =
+            typeof document !== 'undefined' &&
+            typeof document.querySelector === 'function' &&
+            !!document.querySelector('.as-dd-menu, .as-pop');
+          if (hasLayer) return;
+          setOpen(true);
+        }, 130);
+      }, []);
+
+      useEffect(
+        () => () => {
+          if (showTimer.current) clearTimeout(showTimer.current);
+          if (hideTimer.current) clearTimeout(hideTimer.current);
+        },
+        [],
+      );
+
+      useLayoutEffect(() => {
+        if (!open || geo) return;
+        relayout();
+      }, [open, geo, relayout]);
+
+      useEffect(() => {
+        if (!open) return undefined;
+        const onKey = (ev) => {
+          if (ev.key === 'Escape') {
+            setOpen(false);
+            geoRef.current = null;
+            setGeo(null);
+          }
+        };
+        document.addEventListener('keydown', onKey, true);
+        window.addEventListener('scroll', relayout, true);
+        window.addEventListener('resize', relayout);
+        return () => {
+          document.removeEventListener('keydown', onKey, true);
+          window.removeEventListener('scroll', relayout, true);
+          window.removeEventListener('resize', relayout);
+        };
+      }, [open, relayout]);
+
+      const tip = open
+        ? h(
+            'div',
+            {
+              ref: tipRef,
+              className: 'as-tip',
+              role: 'tooltip',
+              style: geo ? { left: geo.left, top: geo.top } : { left: 0, top: 0, visibility: 'hidden' },
+            },
+            text,
+            h('span', {
+              className: 'as-tip-arrow ' + (geo && geo.above ? 'below' : 'above'),
+              style: { left: (geo ? geo.arrow : 14) - 4 },
+            }),
+          )
+        : null;
+
+      return h(
+        'span',
+        {
+          ref: wrapRef,
+          className: 'as-tip-wrap' + (block ? ' as-tip-wrap-block' : ''),
+          style,
+          onPointerEnter: show,
+          onPointerLeave: close,
+          onPointerDown: hideNow,
+          onFocusCapture: show,
+          onBlurCapture: close,
+        },
+        children,
+        tip ? (createPortal ? createPortal(tip, document.body) : tip) : null,
+      );
+    }
+
     function Pill({ on, onClick, children }) {
       return h('button', { type: 'button', className: 'as-pill' + (on ? ' on' : ''), onClick }, children);
     }
@@ -589,7 +719,7 @@ window.__ModuleLoader__.load({
      * Styled replacement for <select>. The native popup cannot be themed, so the
      * trigger is a button and the options render in a floating panel.
      */
-    function Select({ value, options, onChange, placeholder = '请选择', disabled, title, style, menuMinWidth, className }) {
+    function Select({ value, options, onChange, placeholder = '请选择', disabled, style, menuMinWidth, className, searchable }) {
       const list = useMemo(
         () => (options || []).map((o) => (typeof o === 'string' ? { value: o, label: o } : o)).filter(Boolean),
         [options],
@@ -601,11 +731,17 @@ window.__ModuleLoader__.load({
       const [open, setOpen] = useState(false);
       const [active, setActive] = useState(-1);
       const [geo, setGeo] = useState(null);
+      const [query, setQuery] = useState('');
       const geoRef = useRef(null);
       const wrapRef = useRef(null);
       const btnRef = useRef(null);
       const menuRef = useRef(null);
+      const searchRef = useRef(null);
       const box = useRef({ minWidth: 160, maxHeight: 304, preferAbove: false });
+
+      // 可搜索下拉：按名称过滤，键盘导航只在本轮结果里转
+      const needle = searchable ? query.trim().toLowerCase() : '';
+      const shown = needle ? all.filter((o) => String(o.label || '').toLowerCase().includes(needle)) : all;
 
       const apply = useCallback((next) => {
         geoRef.current = next;
@@ -637,12 +773,14 @@ window.__ModuleLoader__.load({
       const close = useCallback(() => {
         setOpen(false);
         setActive(-1);
+        setQuery('');
         geoRef.current = null;
         setGeo(null);
       }, []);
 
       const openMenu = useCallback(() => {
         measureAnchor();
+        setQuery('');
         setOpen(true);
       }, [measureAnchor]);
 
@@ -650,6 +788,44 @@ window.__ModuleLoader__.load({
         if (!open || geo) return;
         relayout();
       }, [open, geo, relayout]);
+
+      // 可搜索时把焦点放进搜索框，打开即可直接打字
+      useEffect(() => {
+        if (!open || !searchable) return;
+        const el = searchRef.current;
+        if (el && typeof el.focus === 'function') el.focus();
+      }, [open, searchable]);
+
+      /** 键盘导航：↑↓ 在过滤结果里移动，Enter 选中，Esc 关闭。 */
+      const onNavKey = useCallback(
+        (ev) => {
+          if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+            ev.preventDefault();
+            if (!open) {
+              openMenu();
+              setActive(0);
+              return;
+            }
+            const delta = ev.key === 'ArrowDown' ? 1 : -1;
+            const total = shown.length;
+            if (!total) return;
+            setActive((i) => (i < 0 ? 0 : (i + delta + total) % total));
+          } else if (ev.key === 'Enter') {
+            if (open && active >= 0 && shown[active]) {
+              ev.preventDefault();
+              pick(shown[active]);
+            } else if (!open) {
+              ev.preventDefault();
+              openMenu();
+            }
+          } else if (ev.key === ' ' && !open) {
+            ev.preventDefault();
+            openMenu();
+          }
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [open, shown, active, openMenu],
+      );
 
       useEffect(() => {
         if (!open) return undefined;
@@ -676,7 +852,8 @@ window.__ModuleLoader__.load({
 
       useEffect(() => {
         if (!open || active < 0 || !menuRef.current) return;
-        const node = menuRef.current.children[active];
+        const rows = menuRef.current.querySelectorAll('.as-dd-opt');
+        const node = rows[active];
         if (node && typeof node.scrollIntoView === 'function') node.scrollIntoView({ block: 'nearest' });
       }, [open, active]);
 
@@ -693,28 +870,10 @@ window.__ModuleLoader__.load({
           type: 'button',
           className: 'as-dd-btn' + (open ? ' open' : ''),
           disabled,
-          title,
           'aria-haspopup': 'listbox',
           'aria-expanded': open,
           onClick: () => (open ? close() : openMenu()),
-          onKeyDown: (ev) => {
-            if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
-              ev.preventDefault();
-              if (!open) {
-                openMenu();
-                setActive(0);
-                return;
-              }
-              const delta = ev.key === 'ArrowDown' ? 1 : -1;
-              setActive((i) => (i < 0 ? 0 : (i + delta + all.length) % all.length));
-            } else if (ev.key === 'Enter' && open && active >= 0) {
-              ev.preventDefault();
-              pick(all[active]);
-            } else if ((ev.key === ' ' || ev.key === 'Enter') && !open) {
-              ev.preventDefault();
-              openMenu();
-            }
-          },
+          onKeyDown: onNavKey,
         },
         h('span', { className: 'as-dd-val' + (current ? '' : ' ph') }, current ? current.label : orphan || placeholder),
         h(Chevron),
@@ -735,27 +894,48 @@ window.__ModuleLoader__.load({
                 visibility: geo ? undefined : 'hidden',
               },
             },
-            all.map((o, i) =>
-              h(
-                'div',
-                {
-                  key: String(o.value),
-                  role: 'option',
-                  'aria-selected': o.value === value,
-                  className:
-                    'as-dd-opt' +
-                    (o.orphan ? ' off' : '') +
-                    (o.disabled ? ' off' : '') +
-                    (o.value === value ? ' on' : '') +
-                    (o.danger ? ' danger' : '') +
-                    (i === active ? ' active' : ''),
-                  onPointerEnter: () => setActive(i),
-                  onClick: () => pick(o),
-                },
-                h('span', { className: 'as-dd-val' }, o.label),
-                o.hint ? h('span', { className: 'as-dd-hint' }, o.hint) : null,
-              ),
-            ),
+            searchable
+              ? h(
+                  'div',
+                  { className: 'as-dd-search' },
+                  h('input', {
+                    ref: searchRef,
+                    className: 'as-dd-search-input',
+                    value: query,
+                    placeholder: '输入名称过滤…',
+                    spellCheck: false,
+                    autoComplete: 'off',
+                    onChange: (e) => {
+                      setQuery(e.target.value);
+                      setActive(0);
+                    },
+                    onKeyDown: onNavKey,
+                  }),
+                )
+              : null,
+            shown.length
+              ? shown.map((o, i) =>
+                  h(
+                    'div',
+                    {
+                      key: String(o.value),
+                      role: 'option',
+                      'aria-selected': o.value === value,
+                      className:
+                        'as-dd-opt' +
+                        (o.orphan ? ' off' : '') +
+                        (o.disabled ? ' off' : '') +
+                        (o.value === value ? ' on' : '') +
+                        (o.danger ? ' danger' : '') +
+                        (i === active ? ' active' : ''),
+                      onPointerEnter: () => setActive(i),
+                      onClick: () => pick(o),
+                    },
+                    h('span', { className: 'as-dd-val' }, o.label),
+                    o.hint ? h('span', { className: 'as-dd-hint' }, o.hint) : null,
+                  ),
+                )
+              : h('div', { className: 'as-dd-empty' }, needle ? `没有匹配「${query.trim()}」的选项` : '暂无可用选项'),
           )
         : null;
 
@@ -845,7 +1025,7 @@ window.__ModuleLoader__.load({
               { className: 'as-pop-head' },
               h('span', { className: 'as-pop-title' }, title || label),
               h('span', { className: 'as-chip' }, `${list.length} 项`),
-              h('button', { type: 'button', className: 'as-x', title: '关闭', onClick: close }, '×'),
+              h('button', { type: 'button', className: 'as-x', 'aria-label': '关闭面板', onClick: close }, '×'),
             ),
             h(
               'div',
@@ -1005,7 +1185,6 @@ window.__ModuleLoader__.load({
                       {
                         type: 'button',
                         className: 'as-x',
-                        title: `删除「${p.name}」`,
                         'aria-label': `删除预设 ${p.name}`,
                         onClick: (ev) => {
                           ev.stopPropagation();
@@ -1046,7 +1225,6 @@ window.__ModuleLoader__.load({
             type: 'button',
             className: 'as-preset-caret',
             'aria-label': '展开预设列表',
-            title: '展开预设列表',
             onClick: () => (open ? close() : openMenu()),
           },
           h(Chevron),
@@ -1055,7 +1233,8 @@ window.__ModuleLoader__.load({
       );
     }
 
-    function useToasts() {      const [items, setItems] = useState([]);
+    function useToasts() {
+      const [items, setItems] = useState([]);
       const seq = useRef(0);
       const timers = useRef([]);
       useEffect(
@@ -1816,7 +1995,7 @@ window.__ModuleLoader__.load({
           ),
           h('span', { className: 'as-file-name' }, data ? '已选择图片' : emptyText || '未选择图片'),
           data
-            ? h('button', { type: 'button', className: 'as-x', title: '清除', onClick: onClear }, '×')
+            ? h('button', { type: 'button', className: 'as-x', 'aria-label': '清除图片', onClick: onClear }, '×')
             : null,
         );
 
@@ -2106,7 +2285,6 @@ window.__ModuleLoader__.load({
                     {
                       className: 'as-row',
                       style: { gap: 6, fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' },
-                      title: '词库里 507 个角色：勾上后命中的角色会自动补发色/瞳色/服装等外观标签',
                     },
                     h('input', {
                       type: 'checkbox',
@@ -2168,20 +2346,33 @@ window.__ModuleLoader__.load({
                 ),
                 h('div', { style: { height: 8 } }),
                 h('div', { className: 'as-label' }, '尺寸'),
-                h(Select, {
-                  value: `${form.width}x${form.height}`,
-                  disabled: latentFromImage,
-                  title: latentFromImage ? '图生图/蒙版重绘的输出尺寸跟随参考图' : '',
-                  options: (state?.sizes || [{ label: '竖 832×1216', width: 832, height: 1216 }]).map((s) => ({
-                    value: `${s.width}x${s.height}`,
-                    label: `${s.width} × ${s.height}`,
-                    hint: s.label,
-                  })),
-                  onChange: (v) => {
-                    const [w, hh] = String(v).split('x').map(Number);
-                    patch({ width: w, height: hh });
-                  },
-                }),
+                latentFromImage
+                  ? h(
+                      Tip,
+                      { text: '图生图 / 蒙版重绘：输出尺寸跟随参考图，这里不生效', block: true },
+                      h(Select, {
+                        value: `${form.width}x${form.height}`,
+                        disabled: true,
+                        options: (state?.sizes || [{ label: '竖 832×1216', width: 832, height: 1216 }]).map((s) => ({
+                          value: `${s.width}x${s.height}`,
+                          label: `${s.width} × ${s.height}`,
+                          hint: s.label,
+                        })),
+                        onChange: () => {},
+                      }),
+                    )
+                  : h(Select, {
+                      value: `${form.width}x${form.height}`,
+                      options: (state?.sizes || [{ label: '竖 832×1216', width: 832, height: 1216 }]).map((s) => ({
+                        value: `${s.width}x${s.height}`,
+                        label: `${s.width} × ${s.height}`,
+                        hint: s.label,
+                      })),
+                      onChange: (v) => {
+                        const [w, hh] = String(v).split('x').map(Number);
+                        patch({ width: w, height: hh });
+                      },
+                    }),
                 latentFromImage
                   ? h('div', { style: { fontSize: 11, marginTop: 6, color: 'var(--dsw-alias-text-secondary, inherit)' } }, '输出尺寸跟随参考图，这里不生效')
                   : null,
@@ -2343,41 +2534,52 @@ window.__ModuleLoader__.load({
                   h(
                     'div',
                     { className: 'as-lora', key: i },
-                    h(Select, {
-                      value: l.name,
-                      placeholder: '选择 LoRA',
-                      options: loras.map((n) => ({ value: n, label: n })),
-                      onChange: (v) => {
-                        const next = form.loras.slice();
-                        next[i] = { ...next[i], name: v };
-                        patch({ loras: next });
-                      },
-                    }),
-                    h('input', {
-                      className: 'as-input',
-                      type: 'number',
-                      step: 0.05,
-                      min: 0,
-                      max: 2,
-                      title: 'LoRA 权重 0–2',
-                      value: l.weight,
-                      onChange: (e) => {
-                        const next = form.loras.slice();
-                        next[i] = { ...next[i], weight: Number(e.target.value) };
-                        patch({ loras: next });
-                      },
-                    }),
-                    h(Select, {
-                      value: l.mode || 'model',
-                      title: 'LoRA 作用范围：只作用于 UNet，或同时作用于 UNet + 文本编码器（CLIP）',
-                      options: [{ value: 'model', label: '仅模型' }, { value: 'both', label: '模型+CLIP' }],
-                      onChange: (v) => {
-                        const next = form.loras.slice();
-                        next[i] = { ...next[i], mode: v };
-                        patch({ loras: next });
-                      },
-                    }),
-                    h('button', { type: 'button', className: 'as-x', title: '移除', onClick: () => patch({ loras: form.loras.filter((_, k) => k !== i) }) }, '×'),
+                    h(
+                      Tip,
+                      { text: 'LoRA 文件：点开后可输入名称搜索，↑↓ 移动、Enter 选中', block: true },
+                      h(Select, {
+                        value: l.name,
+                        placeholder: '搜索或选择 LoRA',
+                        searchable: true,
+                        options: loras.map((n) => ({ value: n, label: n })),
+                        onChange: (v) => {
+                          const next = form.loras.slice();
+                          next[i] = { ...next[i], name: v };
+                          patch({ loras: next });
+                        },
+                      }),
+                    ),
+                    h(
+                      Tip,
+                      { text: '权重 0–2：常用 0.6–0.8；越高风格越强，过高容易画崩', block: true },
+                      h('input', {
+                        className: 'as-input',
+                        type: 'number',
+                        step: 0.05,
+                        min: 0,
+                        max: 2,
+                        value: l.weight,
+                        onChange: (e) => {
+                          const next = form.loras.slice();
+                          next[i] = { ...next[i], weight: Number(e.target.value) };
+                          patch({ loras: next });
+                        },
+                      }),
+                    ),
+                    h(
+                      Tip,
+                      { text: '作用范围：仅模型 = 只改 UNet；模型+CLIP = 同时改文本编码器，画风迁移更明显', block: true },
+                      h(Select, {
+                        value: l.mode || 'model',
+                        options: [{ value: 'model', label: '仅模型' }, { value: 'both', label: '模型+CLIP' }],
+                        onChange: (v) => {
+                          const next = form.loras.slice();
+                          next[i] = { ...next[i], mode: v };
+                          patch({ loras: next });
+                        },
+                      }),
+                    ),
+                    h('button', { type: 'button', className: 'as-x', 'aria-label': '移除这个 LoRA', onClick: () => patch({ loras: form.loras.filter((_, k) => k !== i) }) }, '×'),
                   ),
                 ),
                 h(
@@ -2386,7 +2588,6 @@ window.__ModuleLoader__.load({
                     type: 'button',
                     className: 'as-btn ghost sm',
                     disabled: form.loras.length >= 8,
-                    title: loras.length ? '添加一个 LoRA' : 'ComfyUI 的 models/loras 里还没有文件',
                     onClick: addLora,
                   },
                   form.loras.length >= 8 ? '已达上限 8 个' : '+ 添加 LoRA',
@@ -2573,7 +2774,7 @@ window.__ModuleLoader__.load({
                           h('button', {
                             type: 'button',
                             className: 'as-star',
-                            title: job.favorite ? '取消星标' : '设为星标',
+                            'aria-label': job.favorite ? '取消星标' : '设为星标',
                             onClick: () => act(job.id, 'favorite'),
                           }, job.favorite ? '★' : '☆'),
                           h('span', null, `${job.width}×${job.height} · ${job.steps}步`),

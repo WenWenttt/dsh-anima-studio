@@ -1,4 +1,4 @@
-// UI 冒烟测试：用迷你 React 跑真实渲染，验证 client.js 的渲染路径（node test/ui-smoke.test.mjs）
+﻿// Headless smoke test for dsh-anima-studio/client.js
 // Renders the studio page with a tiny React stand-in (hooks: state/ref/memo/callback,
 // effects are skipped) so runtime errors show up before a dsh restart.
 import { readFileSync } from 'node:fs';
@@ -405,7 +405,7 @@ hintBtn.props.onPointerEnter();
 await new Promise((resolve) => setTimeout(resolve, 160));
 fake.renderRoot(StudioPage, {}); // layout effect measures the layer
 const tipped = fake.renderRoot(StudioPage, {});
-const tips = tipped.collect.filter((n) => (n.props.className || '').includes('as-tip') && !(n.props.className || '').includes('as-tip-arrow'));
+const tips = tipped.collect.filter((n) => String(n.props.className || '').split(' ').includes('as-tip'));
 console.log('tooltips after hover:', tips.length, '·', tips[0] ? flatText([tips[0]]).trim().slice(0, 28) : '(none)');
 if (tips.length !== 1) throw new Error('hint tooltip did not open');
 const tipStyle = tips[0].props.style || {};
@@ -466,7 +466,10 @@ const rows = presetMenu.collect.filter((n) => (n.props.className || '') === 'as-
 console.log('preset menu rows:', rows.length);
 if (rows.length < 2) throw new Error('preset list did not render rows');
 const delBtn = presetMenu.collect.find(
-  (n) => n.tag === 'button' && (n.props.className || '') === 'as-x' && String(n.props.title || '').includes('预设 1'),
+  (n) =>
+    n.tag === 'button' &&
+    (n.props.className || '') === 'as-x' &&
+    String(n.props['aria-label'] || '').includes('预设 1'),
 );
 if (!delBtn) throw new Error('inline delete button for the preset missing');
 delBtn.props.onClick({ stopPropagation() {} });
@@ -509,6 +512,56 @@ if (!loraLabelText.includes('LoRA 名称') || !loraLabelText.includes('权重') 
 }
 console.log('lora labels:', loraLabelText.trim());
 
+/* LoRA 下拉可搜索：输入关键字只剩匹配项，选中后回填 */
+const loraTrigger = seventh.collect.find(
+  (n) => n.tag === 'button' && (n.props.className || '').includes('as-dd-btn') && flatText([n]).includes('styleA'),
+);
+if (!loraTrigger) throw new Error('LoRA select trigger not found');
+loraTrigger.props.onClick();
+const loraOpen = fake.renderRoot(StudioPage, {});
+const searchBox = loraOpen.collect.find((n) => n.tag === 'input' && (n.props.className || '').includes('as-dd-search-input'));
+if (!searchBox) throw new Error('LoRA dropdown should render a search box');
+/* 只统计以 style 开头的选项，避免把其它仍开着的菜单算进来 */
+const loraOpts = (view) =>
+  view.collect.filter(
+    (n) => (n.props.className || '').includes('as-dd-opt') && flatText([n]).trim().startsWith('style'),
+  );
+searchBox.props.onChange({ target: { value: 'styleb' } });
+const filteredView = fake.renderRoot(StudioPage, {});
+const filteredOpts = loraOpts(filteredView);
+console.log('lora search results:', filteredOpts.map((n) => flatText([n]).trim()).join(' | '));
+if (filteredOpts.length !== 1) throw new Error(`search should narrow to 1 option, got ${filteredOpts.length}`);
+if (!flatText(filteredOpts).includes('styleB')) throw new Error('search did not match the expected LoRA');
+filteredOpts[0].props.onClick();
+const afterPickLora = fake.renderRoot(StudioPage, {});
+if (!flatText(afterPickLora.collect).includes('styleB')) throw new Error('picked LoRA was not applied');
+/* 切回 styleA，保持后面"重启恢复"的期望值 */
+const trigger2 = afterPickLora.collect.find(
+  (n) => n.tag === 'button' && (n.props.className || '').includes('as-dd-btn') && flatText([n]).includes('styleB'),
+);
+trigger2.props.onClick();
+const reopen = fake.renderRoot(StudioPage, {});
+const searchBox2 = reopen.collect.find((n) => (n.props.className || '').includes('as-dd-search-input'));
+searchBox2.props.onChange({ target: { value: 'stylea' } });
+const filtered2 = fake.renderRoot(StudioPage, {});
+loraOpts(filtered2)[0].props.onClick();
+
+/* LoRA 行的提示气泡：不能再用原生 title，且悬停应浮出 .as-tip */
+const loraTipWraps = seventh.collect.filter((n) => String(n.props.className || '').split(' ').includes('as-tip-wrap') || String(n.props.className || '').split(' ').includes('as-tip-wrap-block'));
+console.log('lora tip wrappers:', loraTipWraps.length);
+/* 只有「名称 / 权重 / 应用位置」带气泡；×、+ 添加 LoRA 属显而易见的操作，不再挂提示 */
+if (loraTipWraps.length !== 3) throw new Error(`only 3 LoRA controls should carry tips, got ${loraTipWraps.length}`);
+const loraNameTip = loraTipWraps.find((n) => flatText([n]).includes('styleA'));
+if (!loraNameTip) throw new Error('LoRA name control is not wrapped by a themed tip');
+if (loraTrigger.props.title) throw new Error('LoRA select still uses the native title tooltip');
+loraNameTip.props.onPointerEnter();
+await new Promise((resolve) => setTimeout(resolve, 200));
+fake.renderRoot(StudioPage, {});
+const loraTipView = fake.renderRoot(StudioPage, {});
+const loraTips = loraTipView.collect.filter((n) => String(n.props.className || '').split(' ').includes('as-tip'));
+console.log('themed tip text:', loraTips.map((n) => flatText([n]).trim().slice(0, 24)).join(' | '));
+if (!loraTips.some((n) => flatText([n]).includes('LoRA 文件'))) throw new Error('themed tooltip for LoRA select did not open');
+loraNameTip.props.onPointerLeave();
 /* 下拉选项里不再画 ✓（只用高亮表示当前值） */
 if (seventh.collect.some((n) => (n.props.className || '').includes('as-dd-tick'))) {
   throw new Error('selected option should be highlighted without a tick mark');
@@ -671,6 +724,14 @@ const advAgain = afterGen.collect.find((n) => n.tag === 'button' && n.text.inclu
 advAgain.props.onClick();
 fake.renderRoot(StudioPage, {});
 
+/* 全局约定：任何宿主元素都不应再带原生 title（提示统一走 Tip / Hint 自绘气泡） */
+const titled = afterUpdate.collect.filter(
+  (n) => typeof n.tag === 'string' && n.props && Object.prototype.hasOwnProperty.call(n.props, 'title'),
+);
+if (titled.length) {
+  console.log('nodes still using native title:', titled.map((n) => n.tag + '.' + String(n.props.className || '')).join(', '));
+  throw new Error(`native title tooltips are not allowed (${titled.length} found)`);
+}
 /* 预设删除已在前面的「行内 ×」测试覆盖，这里直接进图库 */
 const afterDelete = fake.renderRoot(StudioPage, {});
 
@@ -679,6 +740,12 @@ const galleryTab = afterDelete.collect.find((n) => n.tag === 'button' && n.text.
 if (!galleryTab) throw new Error('gallery tab missing');
 galleryTab.props.onClick();
 const galleryView = fake.renderRoot(StudioPage, {});
+const galleryTitles = galleryView.collect.filter(
+  (n) => typeof n.tag === 'string' && n.props && Object.prototype.hasOwnProperty.call(n.props, 'title'),
+);
+if (galleryTitles.length) {
+  throw new Error(`gallery still uses native title (${galleryTitles.length})`);
+}
 if (!hasText(galleryView.collect, '全部作品') || !(hasText(galleryView.collect, '图库还是空的') || hasText(galleryView.collect, '测试图'))) {
   throw new Error('gallery view did not render');
 }
