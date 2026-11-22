@@ -254,6 +254,7 @@ window.__ModuleLoader__.load({
 .as-progress > i { display:block; height:100%; width:35%; background: var(--dsw-alias-accent, #4a7dff); animation: as-slide 1.1s ease-in-out infinite; }
 @keyframes as-slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(320%)} }
 .as-lora { display:grid; grid-template-columns: 1fr 78px 84px 24px; gap:8px; align-items:center; margin-bottom:8px; }
+.as-lora-labels { display:grid; grid-template-columns: 1fr 78px 84px 24px; gap:8px; align-items:center; font-size:11px; line-height:1.4; color: var(--dsw-alias-text-secondary, light-dark(#8a8a94,#7c7c88)); padding:0 2px 4px; }
 .as-x { cursor:pointer; border:none; background:transparent; color: var(--dsw-alias-text-secondary, inherit); font-size:15px; line-height:1; padding:2px; }
 .as-err { color:#d04545; font-size:12px; white-space:pre-wrap; }
 .as-adv-page { flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
@@ -336,6 +337,13 @@ window.__ModuleLoader__.load({
 .as-pop-row-main { flex:1 1 auto; min-width:0; }
 .as-pop-row-title { font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .as-pop-row-sub { font-size:11px; color: var(--dsw-alias-text-secondary, light-dark(#8a8a94,#7c7c88)); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* ---- 预设组合框 ---- */
+.as-preset-field { position:relative; display:flex; flex:1 1 200px; min-width:170px; }
+.as-preset-field .as-input { padding-right:32px; }
+.as-preset-caret { position:absolute; right:5px; top:50%; transform:translateY(-50%); display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; padding:0; border:none; border-radius:6px; background:transparent; color:inherit; opacity:.55; cursor:pointer; }
+.as-preset-caret:hover { opacity:1; background: color-mix(in srgb, var(--dsw-alias-accent, #4a7dff) 12%, transparent); }
+.as-preset-field .as-dd-menu .as-x:hover { color:#d04545; }
 
 /* ---- 环境准备 ---- */
 .as-setup { margin:8px 16px 0; border:1px solid #d9a44155; border-radius:11px; background: #d9a44110; }
@@ -746,7 +754,6 @@ window.__ModuleLoader__.load({
                 },
                 h('span', { className: 'as-dd-val' }, o.label),
                 o.hint ? h('span', { className: 'as-dd-hint' }, o.hint) : null,
-                o.value === value ? h('span', { className: 'as-dd-tick' }, '✓') : null,
               ),
             ),
           )
@@ -899,8 +906,156 @@ window.__ModuleLoader__.load({
       );
     }
 
-    function useToasts() {
-      const [items, setItems] = useState([]);
+    /**
+     * 预设组合框：一个输入框 + 下拉。输入框同时承担「显示当前预设 / 直接改名」，
+     * 下拉列表每行右侧的 × 直接删除预设（取代原来的「管理」下拉）。
+     */
+    function PresetField({ value, presets, placeholder, onInput, onPick, onDelete }) {
+      const [open, setOpen] = useState(false);
+      const [geo, setGeo] = useState(null);
+      const [anchorW, setAnchorW] = useState(0);
+      const wrapRef = useRef(null);
+      const inputRef = useRef(null);
+      const menuRef = useRef(null);
+      const geoRef = useRef(null);
+
+      const relayout = useCallback(() => {
+        const node = menuRef.current;
+        const anchor = inputRef.current;
+        if (!node || !anchor) return;
+        const next = placeLayer(node, anchor, { gap: 6, align: 'left', preferAbove: false }, geoRef.current);
+        geoRef.current = next;
+        setGeo(next);
+      }, []);
+
+      const close = useCallback(() => {
+        setOpen(false);
+        setGeo(null);
+        geoRef.current = null;
+      }, []);
+
+      // 打开前先量输入框宽度，菜单按同一宽度渲染，保证左右边缘对齐
+      const openMenu = useCallback(() => {
+        const w = inputRef.current ? inputRef.current.offsetWidth : 0;
+        setAnchorW(w);
+        setOpen(true);
+      }, []);
+
+      useLayoutEffect(() => {
+        if (!open || geo) return;
+        relayout();
+      }, [open, geo, relayout]);
+
+      useEffect(() => {
+        if (!open) return undefined;
+        const onDown = (ev) => {
+          const target = ev.target;
+          if (wrapRef.current && wrapRef.current.contains(target)) return;
+          if (menuRef.current && menuRef.current.contains(target)) return;
+          close();
+        };
+        const onKey = (ev) => {
+          if (ev.key === 'Escape') close();
+        };
+        document.addEventListener('pointerdown', onDown, true);
+        document.addEventListener('keydown', onKey, true);
+        window.addEventListener('resize', relayout);
+        window.addEventListener('scroll', relayout, true);
+        return () => {
+          document.removeEventListener('pointerdown', onDown, true);
+          document.removeEventListener('keydown', onKey, true);
+          window.removeEventListener('resize', relayout);
+          window.removeEventListener('scroll', relayout, true);
+        };
+      }, [open, close, relayout]);
+
+      const menu = open
+        ? h(
+            'div',
+            {
+              ref: menuRef,
+              className: 'as-dd-menu',
+              role: 'listbox',
+              style: {
+                width: anchorW || 200,
+                minWidth: anchorW || 200,
+                maxWidth: anchorW || 200,
+                left: geo ? geo.left : 0,
+                top: geo ? geo.top : 0,
+                visibility: geo ? undefined : 'hidden',
+              },
+            },
+            presets.length
+              ? presets.map((p) =>
+                  h(
+                    'div',
+                    {
+                      key: p.name,
+                      className: 'as-dd-opt' + (p.name === value.trim() ? ' on' : ''),
+                      role: 'option',
+                      'aria-selected': p.name === value.trim(),
+                      onClick: () => {
+                        onPick(p.name);
+                        close();
+                      },
+                    },
+                    h('span', { className: 'as-dd-val' }, p.name),
+                    h(
+                      'button',
+                      {
+                        type: 'button',
+                        className: 'as-x',
+                        title: `删除「${p.name}」`,
+                        'aria-label': `删除预设 ${p.name}`,
+                        onClick: (ev) => {
+                          ev.stopPropagation();
+                          onDelete(p.name);
+                        },
+                      },
+                      '×',
+                    ),
+                  ),
+                )
+              : h('div', { className: 'as-dd-empty' }, '还没有预设，输入名字后点保存即可新建'),
+          )
+        : null;
+
+      return h(
+        'div',
+        { ref: wrapRef, className: 'as-preset-field' },
+        h('input', {
+          ref: inputRef,
+          className: 'as-input',
+          name: 'preset-name',
+          value,
+          placeholder,
+          spellCheck: false,
+          onFocus: openMenu,
+          onClick: openMenu,
+          onChange: (e) => onInput(e.target.value),
+          onKeyDown: (e) => {
+            if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              openMenu();
+            }
+          },
+        }),
+        h(
+          'button',
+          {
+            type: 'button',
+            className: 'as-preset-caret',
+            'aria-label': '展开预设列表',
+            title: '展开预设列表',
+            onClick: () => (open ? close() : openMenu()),
+          },
+          h(Chevron),
+        ),
+        menu ? (createPortal ? createPortal(menu, document.body) : menu) : null,
+      );
+    }
+
+    function useToasts() {      const [items, setItems] = useState([]);
       const seq = useRef(0);
       const timers = useRef([]);
       useEffect(
@@ -1359,7 +1514,7 @@ window.__ModuleLoader__.load({
       const toTags = async (input) => {
         const source = (typeof input === 'string' ? input : form.prompt).trim();
         if (!source) {
-          notify('先写一段画面描述，再点「中 → 标签」', 'err');
+          notify('先写一段画面描述，再点「中文 → 标签」', 'err');
           setNote('');
           return '';
         }
@@ -1521,30 +1676,48 @@ window.__ModuleLoader__.load({
         return false;
       };
 
+      /**
+       * 保存预设的语义：
+       *   名称框有内容 → 以它为名（同名即覆盖，否则新建）
+       *   名称框为空、但下拉里选中了某个预设 → 覆盖那个预设（改了 LoRA 也能存回去）
+       *   都没有 → 自动起名「预设 N」
+       */
       const savePreset = () => {
-        const name = presetName.trim() || `预设 ${presets.length + 1}`;
-        const existed = presets.some((p) => p.name === name);
+        const typed = presetName.trim();
+        const target = typed || selectedPreset || `预设 ${presets.length + 1}`;
+        const existed = presets.some((p) => p.name === target);
         const next = presets
-          .filter((p) => p.name !== name)
-          .concat([{ name, form: cleanForm(form), savedAt: Date.now() }]);
+          .filter((p) => p.name !== target)
+          .concat([{ name: target, form: cleanForm(form), savedAt: Date.now() }]);
         setPresets(next);
         if (persistPresets(next)) {
-          setPresetName('');
-          setSelectedPreset(name);
-          notify(existed ? `已更新预设「${name}」` : `已保存预设「${name}」`);
+          setPresetName(target);
+          setSelectedPreset(target);
+          notify(existed ? `已更新预设「${target}」` : `已保存预设「${target}」`);
         }
       };
+
+      /** 保存按钮的文案跟着语义走，避免"点了才发现存成了新预设"。 */
+      const presetSaveLabel = (() => {
+        const typed = presetName.trim();
+        if (typed && presets.some((p) => p.name === typed)) return `更新「${typed}」`;
+        if (typed) return '保存为新预设';
+        if (selectedPreset) return `更新「${selectedPreset}」`;
+        return '保存预设';
+      })();
 
       const applyPreset = (name) => {
         const found = presets.find((p) => p.name === name);
         if (!found || !found.form) return;
         patch({ ...EMPTY_FORM, ...cleanForm(found.form) });
+        setPresetName(name);
       };
 
       const deletePreset = (name) => {
         const next = presets.filter((p) => p.name !== name);
         setPresets(next);
         if (selectedPreset === name) setSelectedPreset('');
+        if (presetName.trim() === name) setPresetName('');
         if (persistPresets(next)) notify(`已删除预设「${name}」`);
       };
 
@@ -1886,7 +2059,7 @@ window.__ModuleLoader__.load({
                     h(
                       'button',
                       { type: 'button', className: 'as-btn ghost sm', disabled: translating, onClick: () => toTags() },
-                      translating ? '转换中…' : '中 → 标签',
+                      translating ? '转换中…' : '中文 → 标签',
                     ),
                   ),
                 ),
@@ -2108,42 +2281,32 @@ window.__ModuleLoader__.load({
                 h(
                   'div',
                   { className: 'as-preset-row' },
-                  h(Select, {
-                    value: selectedPreset,
-                    placeholder: '自定义参数',
-                    style: { flex: '1 1 180px', minWidth: 140 },
-                    options: presets.map((p) => ({ value: p.name, label: p.name })),
-                    onChange: (v) => {
-                      setSelectedPreset(v);
-                      if (v) applyPreset(v);
-                    },
-                  }),
-                  h('input', {
-                    className: 'as-input',
-                    style: { flex: '0 1 150px', width: 'auto', minWidth: 112 },
-                    placeholder: '预设名称',
+                  h(PresetField, {
                     value: presetName,
-                    onChange: (e) => setPresetName(e.target.value),
-                    onKeyDown: (e) => {
-                      if (e.key === 'Enter') savePreset();
+                    presets,
+                    placeholder: '自定义参数 / 输入预设名称',
+                    onInput: (v) => setPresetName(v),
+                    onPick: (name) => {
+                      setSelectedPreset(name);
+                      applyPreset(name);
                     },
+                    onDelete: (name) => deletePreset(name),
                   }),
-                  h('button', { type: 'button', className: 'as-btn sm', onClick: savePreset }, '保存预设'),
-                  h(Select, {
-                    value: '',
-                    placeholder: '管理',
-                    style: { flex: '0 0 116px', width: 116 },
-                    options: presets.length
-                      ? presets
-                          .map((p) => ({ value: p.name, label: `删除「${p.name}」`, danger: true }))
-                          .concat([{ value: '__clear__', label: '清空全部预设', danger: true }])
-                      : [{ value: '__none__', label: '暂无预设', disabled: true }],
-                    onChange: (v) => {
-                      if (!v || v === '__none__') return;
-                      if (v === '__clear__') clearPresets();
-                      else deletePreset(v);
-                    },
-                  }),
+                  h('button', { type: 'button', className: 'as-btn sm', onClick: savePreset }, presetSaveLabel),
+                  presets.length
+                    ? h(
+                        'button',
+                        { type: 'button', className: 'as-btn ghost sm', onClick: clearPresets },
+                        '清空',
+                      )
+                    : null,
+                  h(
+                    'div',
+                    { style: { flexBasis: '100%', fontSize: 11, marginTop: 6, color: 'var(--dsw-alias-text-secondary, inherit)' } },
+                    selectedPreset
+                      ? `当前预设「${selectedPreset}」：改完参数点「${presetSaveLabel}」会覆盖；想另存就把名字改成别的；列表里每行右侧 × 可删除。`
+                      : '输入名字点保存即新建；下拉列表里点一行即套用，右侧 × 删除该预设。',
+                  ),
                 ),
               ),
               h(
@@ -2163,6 +2326,16 @@ window.__ModuleLoader__.load({
                   }, loraBusy ? '刷新中…' : '刷新列表'),
                 ),
                 h('div', { style: { height: 10 } }),
+                form.loras.length
+                  ? h(
+                      'div',
+                      { className: 'as-lora-labels' },
+                      h('span', null, 'LoRA 名称'),
+                      h('span', null, '权重'),
+                      h('span', null, '应用位置'),
+                      h('span', null, ''),
+                    )
+                  : null,
                 form.loras.length
                   ? null
                   : h('div', { className: 'as-lora-empty' }, '还没有叠加 LoRA。'),
@@ -2196,8 +2369,8 @@ window.__ModuleLoader__.load({
                     }),
                     h(Select, {
                       value: l.mode || 'model',
-                      title: 'LoRA 作用范围',
-                      options: [{ value: 'model', label: '模型' }, { value: 'both', label: '+CLIP' }],
+                      title: 'LoRA 作用范围：只作用于 UNet，或同时作用于 UNet + 文本编码器（CLIP）',
+                      options: [{ value: 'model', label: '仅模型' }, { value: 'both', label: '模型+CLIP' }],
                       onChange: (v) => {
                         const next = form.loras.slice();
                         next[i] = { ...next[i], mode: v };

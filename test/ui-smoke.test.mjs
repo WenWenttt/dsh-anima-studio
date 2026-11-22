@@ -310,7 +310,7 @@ console.log('render #1 ok, nodes:', first.collect.length);
 if (!hasText(first.collect, '图片创作')) throw new Error('header missing');
 
 /* 中 → 标签: empty prompt must produce visible feedback (used to be a silent no-op) */
-const tagBtn = first.collect.find((n) => n.tag === 'button' && n.text.includes('中 → 标签'));
+const tagBtn = first.collect.find((n) => n.tag === 'button' && n.text.includes('中文 → 标签'));
 if (!tagBtn) throw new Error('translate button missing');
 tagBtn.props.onClick();
 const afterEmpty = fake.renderRoot(StudioPage, {});
@@ -322,7 +322,7 @@ console.log('translate guard ok');
 const ta = afterEmpty.collect.find((n) => n.tag === 'textarea');
 ta.props.onChange({ target: { value: '金发, 校服, 教室' } });
 const typed = fake.renderRoot(StudioPage, {});
-const tagBtn2 = typed.collect.find((n) => n.tag === 'button' && n.text.includes('中 → 标签'));
+const tagBtn2 = typed.collect.find((n) => n.tag === 'button' && n.text.includes('中文 → 标签'));
 tagBtn2.props.onClick();
 await new Promise((resolve) => setTimeout(resolve, 60));
 const converted = fake.renderRoot(StudioPage, {});
@@ -369,7 +369,7 @@ console.log('render #2 (advanced) ok, nodes:', second.collect.length);
 /* custom dropdown: count triggers, open one, expect a menu */
 const triggers = second.collect.filter((n) => n.tag === 'button' && (n.props.className || '').includes('as-dd-btn'));
 console.log('custom select triggers:', triggers.length);
-if (triggers.length < 7) throw new Error('selects were not replaced by the custom dropdown');
+if (triggers.length < 6) throw new Error('selects were not replaced by the custom dropdown');
 triggers[0].props.onClick();
 fake.renderRoot(StudioPage, {}); // effects run here (menu position)
 const third = fake.renderRoot(StudioPage, {});
@@ -425,6 +425,56 @@ console.log('toasts after save:', toasts.map((t) => t.text));
 if (!hasText(toasts, '已保存预设')) throw new Error('preset save toast missing');
 if (!store.has('anima-studio-presets-v1')) throw new Error('presets were not persisted');
 
+/* 更新已有预设：改参数后再保存，应该覆盖而不是新增 */
+const readPresets = () => JSON.parse(store.get('anima-studio-presets-v1') || '[]');
+const beforeUpdate = readPresets();
+console.log('presets after first save:', beforeUpdate.map((p) => p.name).join(', '));
+const negBox = fourth.collect.find((n) => n.tag === 'textarea');
+negBox.props.onChange({ target: { value: 'updated negative' } });
+const afterEdit = fake.renderRoot(StudioPage, {});
+const updateBtn = afterEdit.collect.find((n) => n.tag === 'button' && n.text.includes('更新「'));
+if (!updateBtn) throw new Error('save button should switch to 更新 after selecting a preset');
+updateBtn.props.onClick();
+const afterUpdate = fake.renderRoot(StudioPage, {});
+const updated = readPresets();
+if (updated.length !== beforeUpdate.length) {
+  throw new Error(`updating a preset created a new one: ${beforeUpdate.length} -> ${updated.length}`);
+}
+if (updated[0].form.negative !== 'updated negative') throw new Error('preset was not overwritten with new params');
+if (!hasText(afterUpdate.collect, '已更新预设')) throw new Error('update toast missing');
+console.log('preset update ok:', updated[0].name);
+
+/* 另存为新预设：在同一个组合框里改名再保存应该新增 */
+const nameInput = afterUpdate.collect.find((n) => n.tag === 'input' && n.props.name === 'preset-name');
+if (!nameInput) throw new Error('preset name field missing (should be the merged combo box)');
+nameInput.props.onChange({ target: { value: '另存预设' } });
+const renamed = fake.renderRoot(StudioPage, {});
+const saveAsBtn = renamed.collect.find((n) => n.tag === 'button' && n.text.includes('保存为新预设'));
+if (!saveAsBtn) throw new Error('save-as button label missing for a new name');
+saveAsBtn.props.onClick();
+const savedAs = readPresets();
+if (savedAs.length !== updated.length + 1) throw new Error('save-as did not create a new preset');
+console.log('save-as ok:', savedAs.map((p) => p.name).join(', '));
+
+/* 预设列表里行内 × 删除，替代原来的「管理」下拉 */
+const caret = renamed.collect.find((n) => n.tag === 'button' && (n.props.className || '').includes('as-preset-caret'));
+if (!caret) throw new Error('preset list caret missing');
+caret.props.onClick();
+fake.renderRoot(StudioPage, {});
+const presetMenu = fake.renderRoot(StudioPage, {});
+const rows = presetMenu.collect.filter((n) => (n.props.className || '') === 'as-dd-opt');
+console.log('preset menu rows:', rows.length);
+if (rows.length < 2) throw new Error('preset list did not render rows');
+const delBtn = presetMenu.collect.find(
+  (n) => n.tag === 'button' && (n.props.className || '') === 'as-x' && String(n.props.title || '').includes('预设 1'),
+);
+if (!delBtn) throw new Error('inline delete button for the preset missing');
+delBtn.props.onClick({ stopPropagation() {} });
+const afterDeletePreset = fake.renderRoot(StudioPage, {});
+if (readPresets().some((p) => p.name === '预设 1')) throw new Error('inline delete did not remove the preset');
+if (!hasText(afterDeletePreset.collect, '已删除预设')) throw new Error('inline delete toast missing');
+console.log('inline preset delete ok:', readPresets().map((p) => p.name).join(', '));
+
 /* restore defaults -> toast */
 const resetBtn = fourth.collect.find((n) => n.tag === 'button' && n.text.includes('恢复默认参数'));
 if (!resetBtn) throw new Error('reset button missing');
@@ -449,6 +499,20 @@ if (!loraRows.length) throw new Error('LoRA row was not added');
 const loraRowText = flatText(loraRows);
 console.log('lora row text:', loraRowText.trim());
 if (!loraRowText.includes('styleA.safetensors')) throw new Error('LoRA row did not pick the first available file');
+
+/* LoRA 列标题（名称 / 权重 / 应用位置） */
+const loraLabels = seventh.collect.find((n) => (n.props.className || '') === 'as-lora-labels');
+if (!loraLabels) throw new Error('LoRA column labels missing');
+const loraLabelText = flatText([loraLabels]);
+if (!loraLabelText.includes('LoRA 名称') || !loraLabelText.includes('权重') || !loraLabelText.includes('应用位置')) {
+  throw new Error('LoRA column labels incomplete: ' + loraLabelText);
+}
+console.log('lora labels:', loraLabelText.trim());
+
+/* 下拉选项里不再画 ✓（只用高亮表示当前值） */
+if (seventh.collect.some((n) => (n.props.className || '').includes('as-dd-tick'))) {
+  throw new Error('selected option should be highlighted without a tick mark');
+}
 
 /* 高级页切换模式 -> 参考图控件出现 */
 const modeView = fake.renderRoot(StudioPage, {});
@@ -545,7 +609,7 @@ console.log('appearance toggle ok');
 const ta5 = withAppearance.collect.find((n) => n.tag === 'textarea');
 ta5.props.onChange({ target: { value: '金发, 校服' } });
 const ready = fake.renderRoot(StudioPage, {});
-ready.collect.find((n) => n.tag === 'button' && n.text.includes('中 → 标签')).props.onClick();
+ready.collect.find((n) => n.tag === 'button' && n.text.includes('中文 → 标签')).props.onClick();
 await new Promise((resolve) => setTimeout(resolve, 60));
 const lastTranslate = requests.filter((r) => r.url.includes('/translate')).pop();
 console.log('translate body:', lastTranslate && JSON.stringify({ engine: lastTranslate.body.engine, mode: lastTranslate.body.mode, appearance: lastTranslate.body.appearance }));
@@ -607,12 +671,8 @@ const advAgain = afterGen.collect.find((n) => n.tag === 'button' && n.text.inclu
 advAgain.props.onClick();
 fake.renderRoot(StudioPage, {});
 
-/* delete preset -> toast */
-const delView = fake.renderRoot(StudioPage, {});
-pickOption(delView, '管理', '删除「预设 1」').props.onClick();
+/* 预设删除已在前面的「行内 ×」测试覆盖，这里直接进图库 */
 const afterDelete = fake.renderRoot(StudioPage, {});
-const delToasts = afterDelete.collect.filter((n) => (n.props.className || '').includes('as-toast'));
-if (!hasText(delToasts, '已删除预设')) throw new Error('delete preset toast missing');
 
 /* gallery tab renders */
 const galleryTab = afterDelete.collect.find((n) => n.tag === 'button' && n.text.trim() === '图库');
