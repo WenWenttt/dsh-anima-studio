@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: 安装与使用说明
-    url: https://github.com/WenhuarenNB/dsh-anima-studio#安装
+    url: https://github.com/WenWenttt/dsh-anima-studio#安装
     about: 装 dsh、准备 ComfyUI、下载模型、配置项，都在 README 里
   - name: 常见问题（ComfyUI 连不上 / 模型缺失）
-    url: https://github.com/WenhuarenNB/dsh-anima-studio#拿到-comfyui-与模型三种方式选一种
+    url: https://github.com/WenWenttt/dsh-anima-studio#拿到-comfyui-与模型三种方式选一种
     about: 页面顶部的「环境未就绪」横幅会告诉你缺什么，先按这一节处理

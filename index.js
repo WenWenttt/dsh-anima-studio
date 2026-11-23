@@ -1000,12 +1000,48 @@ async function readBody(req, limit = 131072) {
   return Buffer.concat(chunks).toString('utf8');
 }
 
+/**
+ * 浏览器信任栅栏：dsh 的 connection 服务提供 requestRejection(req)，
+ * Host/Origin 被伪造（DNS 重绑定）或未认证的请求会返回一个 HTTP 状态码。
+ * 服务缺失时只在加载时警告一次（老宿主），不阻塞插件启动。
+ */
+function admissionGuard(ctx) {
+  let check;
+  ctx.inject(['connection'], (connectionCtx) => {
+    const fn = (request) => connectionCtx.connection.requestRejection(request);
+    check = fn;
+    return () => {
+      if (check === fn) check = undefined;
+    };
+  });
+  return () => check;
+}
+
+/** 把栅栏套在路由上：拒绝就吐 401/403/503，放行才进入真正的 handler。 */
+function withWebAdmission(route, getAdmission) {
+  return {
+    ...route,
+    handler: (req, res) => {
+      let rejection;
+      try {
+        rejection = getAdmission()?.(req);
+      } catch {
+        rejection = 503;
+      }
+      if (rejection === undefined) return route.handler(req, res);
+      res.writeHead(rejection, { 'content-type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: rejection === 401 ? 'unauthorized' : 'forbidden' }));
+    },
+  };
+}
+
 function registerRoutes(ctx, config) {
   const routes = ['state', 'generate', 'jobs', 'job', 'image', 'cancel', 'action', 'loras', 'controlnets', 'translate', 'library', 'setup'];
+  const getAdmission = admissionGuard(ctx);
   for (const route of routes) {
     ctx.effect(
       () =>
-        ctx.webServer.register({
+        ctx.webServer.register(withWebAdmission({
           kind: 'exact',
           path: `${API}/${route}`,
           handler: async (req, res) => {
@@ -1178,7 +1214,7 @@ function registerRoutes(ctx, config) {
               return undefined;
             }
           },
-        }),
+        }, getAdmission)),
       `${name}: ${route}`,
     );
   }

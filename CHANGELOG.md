@@ -2,6 +2,11 @@
 
 版本号跟随 `package.json`。日期为本地时间。
 
+## 1.11.1
+
+- **安全加固**：所有 `/api/anima-studio/*` 路由接入宿主栅栏 `ctx.connection.requestRejection()`——Host/Origin 被伪造（DNS 重绑定）或未认证的请求直接 401/403/503，不再执行。此前一条外部页面也能调用这些路由（插件市场收录评论 #17961 指出）
+- 仓库地址随 GitHub 账号改名从 `WenhuarenNB` 迁到 `WenWenttt`：README、徽章、issue 模板、发版脚本同步更新（旧地址由 GitHub 自动重定向）
+
 ## 1.11.0
 
 - **LoRA 下拉支持搜索**：打开即可输入名称过滤（如 `night`、`illust`），↑↓ + Enter 选择；LoRA 很多时不用再靠滚动

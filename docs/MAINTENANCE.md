@@ -14,8 +14,8 @@
 
 ## 二、每周 5 分钟
 
-- 看 [Issues](https://github.com/WenhuarenNB/dsh-anima-studio/issues)：有无新问题、是否需要复现
-- 看 [Actions](https://github.com/WenhuarenNB/dsh-anima-studio/actions)：是否还是绿的（红了通常是 GitHub 环境变化，见第七节）
+- 看 [Issues](https://github.com/WenWenttt/dsh-anima-studio/issues)：有无新问题、是否需要复现
+- 看 [Actions](https://github.com/WenWenttt/dsh-anima-studio/actions)：是否还是绿的（红了通常是 GitHub 环境变化，见第七节）
 - 看 dsh 是否发了新版（`dsh` 更新后务必本地跑一遍插件，见第三节）
 
 ## 三、兼容性：升级 dsh 之后必须验证的 5 处
@@ -63,7 +63,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\release.ps1 -Bump patch
 #    -DryRun                    ← 只打印将要做什么
 
 # 3. 去网页写 Release 说明（把 CHANGELOG 里那一段粘过去）
-#    https://github.com/WenhuarenNB/dsh-anima-studio/releases/new
+#    https://github.com/WenWenttt/dsh-anima-studio/releases/new
 ```
 
 版本号规则（语义化）：

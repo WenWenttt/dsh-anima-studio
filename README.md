@@ -1,11 +1,11 @@
 # 绘梦 · Animagine（dsh-anima-studio）
 
-[![CI](https://github.com/WenhuarenNB/dsh-anima-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/WenhuarenNB/dsh-anima-studio/actions/workflows/ci.yml)
+[![CI](https://github.com/WenWenttt/dsh-anima-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/WenWenttt/dsh-anima-studio/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen)
 ![dsh](https://img.shields.io/badge/dsh-%3E%3D0.2.2--rc.1-7c5cff)
 
-[更新日志](CHANGELOG.md) · [发布记录](https://github.com/WenhuarenNB/dsh-anima-studio/releases) · [参与开发](CONTRIBUTING.md)
+[更新日志](CHANGELOG.md) · [发布记录](https://github.com/WenWenttt/dsh-anima-studio/releases) · [参与开发](CONTRIBUTING.md)
 
 [DeepSeek Harness](https://github.com/deepseek-ai)（dsh）插件：把本地 **Animagine XL 4.0 Opt**（SDXL 微调）跑在 **ComfyUI** 上，给你一个能写中文提示词、调参数、翻图库的工作台，并让 Agent 能直接生成图片。
 
@@ -32,7 +32,7 @@
 
 ```bash
 # 1. 放进 dsh 的 profile（示例路径，以你的 profile 为准）
-git clone https://github.com/WenhuarenNB/dsh-anima-studio.git \
+git clone https://github.com/WenWenttt/dsh-anima-studio.git \
   ~/.dsh/profiles/desktop/node_modules/dsh-anima-studio
 ```
 

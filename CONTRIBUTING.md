@@ -4,14 +4,14 @@
 
 ## 先沟通，再动手
 
-- **Bug / 想法**：先用 [问题反馈 / 功能建议](https://github.com/WenhuarenNB/dsh-anima-studio/issues/new/choose) 开 issue，说清楚现象、环境、复现步骤。
+- **Bug / 想法**：先用 [问题反馈 / 功能建议](https://github.com/WenWenttt/dsh-anima-studio/issues/new/choose) 开 issue，说清楚现象、环境、复现步骤。
 - **小修**（错字、样式、文档）：可以直接提 PR。
 - **大改**（新生成模式、改数据结构、动 `client.js` 的 UI 框架层）：**先开 issue 对齐方案**，避免你写完了方向不对。
 
 ## 开发环境
 
 ```bash
-git clone https://github.com/WenhuarenNB/dsh-anima-studio.git
+git clone https://github.com/WenWenttt/dsh-anima-studio.git
 cd dsh-anima-studio
 node --version        # 需要 22.19+ 或 24+
 npm run check         # node --check 全部源码

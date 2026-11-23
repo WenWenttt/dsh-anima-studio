@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         感谢反馈！这些信息能帮我在不动你电脑的情况下定位问题。
-        如果只是**安装/配置**上的疑问，先看 [README 的安装章节](https://github.com/WenhuarenNB/dsh-anima-studio#安装)，那一节覆盖了 90% 的问题。
+        如果只是**安装/配置**上的疑问，先看 [README 的安装章节](https://github.com/WenWenttt/dsh-anima-studio#安装)，那一节覆盖了 90% 的问题。
 
   - type: textarea
     id: what

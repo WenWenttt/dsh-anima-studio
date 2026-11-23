@@ -4,7 +4,7 @@
 
 .DESCRIPTION
   只做机械动作，不替你写代码。用完记得去网页补 Release 说明：
-  https://github.com/WenhuarenNB/dsh-anima-studio/releases/new
+  https://github.com/WenWenttt/dsh-anima-studio/releases/new
 
 .PARAMETER Bump
   patch（修 bug）/ minor（新功能）/ major（破坏性变更）
@@ -135,5 +135,5 @@ if ($NoPush) {
 }
 
 Write-Host "`n下一步：去网页写 Release 说明" -ForegroundColor Cyan
-Write-Host "  https://github.com/WenhuarenNB/dsh-anima-studio/releases/new?tag=$tag"
+Write-Host "  https://github.com/WenWenttt/dsh-anima-studio/releases/new?tag=$tag"
 Write-Host "  把 CHANGELOG 里「## $new」那一段粘过去即可。`n"

@@ -1,10 +1,10 @@
 {
   "name": "dsh-anima-studio",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "description": "DeepSeek Harness 插件：本地 Animagine XL 4.0 生图工作台，提示词（中文→danbooru 标签）、尺寸预设、采样参数、LoRA 叠加与图库，接本机 ComfyUI。",
   "type": "module",
   "license": "MIT",
-  "author": "WenhuarenNB",
+  "author": "WenWenttt",
   "keywords": [
     "dsh",
     "dsh-plugin",
@@ -20,11 +20,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WenhuarenNB/dsh-anima-studio.git"
+    "url": "git+https://github.com/WenWenttt/dsh-anima-studio.git"
   },
-  "homepage": "https://github.com/WenhuarenNB/dsh-anima-studio#readme",
+  "homepage": "https://github.com/WenWenttt/dsh-anima-studio#readme",
   "bugs": {
-    "url": "https://github.com/WenhuarenNB/dsh-anima-studio/issues"
+    "url": "https://github.com/WenWenttt/dsh-anima-studio/issues"
   },
   "exports": {
     ".": "./index.js",
