@@ -1,6 +1,6 @@
 {
   "name": "dsh-anima-studio",
-  "version": "1.11.1",
+  "version": "1.11.2",
   "description": "DeepSeek Harness 插件：本地 Animagine XL 4.0 生图工作台，提示词（中文→danbooru 标签）、尺寸预设、采样参数、LoRA 叠加与图库，接本机 ComfyUI。",
   "type": "module",
   "license": "MIT",

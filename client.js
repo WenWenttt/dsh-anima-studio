@@ -31,9 +31,9 @@ window.__ModuleLoader__.load({
 
     const MODE_HINT = {
       txt2img: '文生图：只按提示词和尺寸出图',
-      img2img: '图生图：拿一张图当底，按降噪强度重画',
-      inpaint: '蒙版重绘：参考图上涂白的地方重画，其余保留',
-      controlnet: 'ControlNet：用一张图约束构图，再按提示词重画',
+      img2img: '图生图：拿一张图当底，按降噪强度重画（提示词可留空）',
+      inpaint: '蒙版重绘：参考图上涂白的地方重画，其余保留（提示词可留空，只描述白区内容）',
+      controlnet: 'ControlNet：用一张图约束构图，再按提示词重画（提示词可留空）',
     };
 
     const MODE_ACTION = {
@@ -1739,9 +1739,10 @@ window.__ModuleLoader__.load({
       };
 
       const generate = async () => {
-        if (!form.prompt.trim()) {
+        // 只有文生图必须写画面描述；图生图/蒙版重绘/ControlNet 由参考图决定画面，提示词可留空。
+        if (!form.prompt.trim() && form.mode === 'txt2img') {
           setError('先写画面描述');
-          notify('先写画面描述，再生成', 'err');
+          notify('文生图需要画面描述：写一句中文或英文标签', 'err');
           return;
         }
         const missing = missingInput();
@@ -2211,7 +2212,7 @@ window.__ModuleLoader__.load({
                     ? h('div', { className: 'as-empty' }, '生成失败', h('div', { className: 'as-err' }, resultJob.error || ''))
                     : h('div', { className: 'as-empty' },
                         form.mode === 'txt2img' ? '先描述画面，再生成' : `${modeLabel}：${MODE_HINT[form.mode] || ''}`,
-                        h('div', null, form.mode === 'txt2img' ? '完成后可在这里调整参数、继续创作' : '选好参考图后点下面的按钮'),
+                        h('div', null, form.mode === 'txt2img' ? '完成后可在这里调整参数、继续创作' : '选好参考图后点下面的按钮（提示词可留空）'),
                       ),
             ),
           ),
@@ -2416,7 +2417,7 @@ window.__ModuleLoader__.load({
                   )
                 : h(
                     'button',
-                    { type: 'button', className: 'as-btn block', disabled: !form.prompt.trim(), onClick: generate },
+                    { type: 'button', className: 'as-btn block', disabled: !form.prompt.trim() && form.mode === 'txt2img', onClick: generate },
                     MODE_ACTION[form.mode] || '生成图片',
                   ),
             ),

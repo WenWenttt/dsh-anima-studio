@@ -1,4 +1,4 @@
-﻿// Headless smoke test for dsh-anima-studio/client.js
+// UI 冒烟测试：用迷你 React 跑真实渲染，验证 client.js 的渲染路径（node test/ui-smoke.test.mjs）
 // Renders the studio page with a tiny React stand-in (hooks: state/ref/memo/callback,
 // effects are skipped) so runtime errors show up before a dsh restart.
 import { readFileSync } from 'node:fs';
@@ -592,6 +592,15 @@ const disabledSelect = create2.collect.find(
 if (!disabledSelect) throw new Error('size select was not disabled for img2img');
 if (!hasText(create2.collect, '参考图已经决定主体')) throw new Error('mode-aware translation hint missing');
 console.log('create view follows img2img ok');
+
+/* 图生图允许空提示词：按钮不因描述为空而禁用，提示文案也要写明 */
+create2.collect.find((n) => n.tag === 'textarea').props.onChange({ target: { value: '' } });
+const emptyPromptView = fake.renderRoot(StudioPage, {});
+const emptyGenBtn = emptyPromptView.collect.find((n) => n.tag === 'button' && (n.props.className || '').includes('as-btn block'));
+if (!emptyGenBtn) throw new Error('generate button missing in img2img view');
+if (emptyGenBtn.props.disabled) throw new Error('img2img generate button must stay enabled with an empty prompt');
+if (!hasText(emptyPromptView.collect, '提示词可留空')) throw new Error('img2img hint should state the prompt is optional');
+console.log('img2img accepts an empty prompt ok');
 
 /* 缺参考图时点生成：给出明确提示，不排队 */
 const ta3 = create2.collect.find((n) => n.tag === 'textarea');

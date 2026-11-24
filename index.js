@@ -856,7 +856,10 @@ function registerTools(ctx, config) {
         ],
       },
       async execute(args) {
-        if (!args.prompt || !String(args.prompt).trim()) throw new Error('prompt 不能为空');
+        const toolMode = MODES.includes(args.mode) ? args.mode : 'txt2img';
+        if (toolMode === 'txt2img' && (!args.prompt || !String(args.prompt).trim())) {
+          throw new Error('文生图需要 prompt（画面描述不能为空）');
+        }
         const dir = jobsDir(config);
         const started = await ensureComfyStarted(config);
         if (!started) {
@@ -1127,7 +1130,10 @@ function registerRoutes(ctx, config) {
 
               if (route === 'generate' && req.method === 'POST') {
                 const input = JSON.parse((await readBody(req, 52428800)) || '{}');
-                if (!input.prompt || !String(input.prompt).trim()) return json(400, { error: '提示词不能为空' });
+                const mode = MODES.includes(input.mode) ? input.mode : 'txt2img';
+                if (mode === 'txt2img' && (!input.prompt || !String(input.prompt).trim())) {
+                  return json(400, { error: '文生图需要提示词（画面描述不能为空）' });
+                }
                 const started = await ensureComfyStarted(config);
                 if (!started) {
                   return json(503, {
